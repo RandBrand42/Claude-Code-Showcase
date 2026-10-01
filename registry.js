@@ -16,7 +16,7 @@ window.SHOWCASE_REGISTRY = {
     ],
     [
       "lines of code",
-      24065
+      24108
     ],
     [
       "runtime dependencies",
@@ -42,7 +42,7 @@ window.SHOWCASE_REGISTRY = {
       "image": "assets/thumbs/fluxfield.webp",
       "readme": true,
       "files": 9,
-      "lines": 2124
+      "lines": 2125
     },
     {
       "id": "meridian",
@@ -62,7 +62,7 @@ window.SHOWCASE_REGISTRY = {
       "image": "assets/thumbs/meridian.webp",
       "readme": true,
       "files": 19,
-      "lines": 3814
+      "lines": 3840
     },
     {
       "id": "neuron-forge",
@@ -82,7 +82,7 @@ window.SHOWCASE_REGISTRY = {
       "image": "assets/thumbs/neuron-forge.webp",
       "readme": true,
       "files": 14,
-      "lines": 2877
+      "lines": 2878
     },
     {
       "id": "resonance",
@@ -102,7 +102,7 @@ window.SHOWCASE_REGISTRY = {
       "image": "assets/thumbs/resonance.webp",
       "readme": true,
       "files": 13,
-      "lines": 4186
+      "lines": 4187
     },
     {
       "id": "orbital",
@@ -122,7 +122,7 @@ window.SHOWCASE_REGISTRY = {
       "image": "assets/thumbs/orbital.webp",
       "readme": true,
       "files": 8,
-      "lines": 2928
+      "lines": 2929
     },
     {
       "id": "mnemo",
@@ -142,7 +142,7 @@ window.SHOWCASE_REGISTRY = {
       "image": "assets/thumbs/mnemo.webp",
       "readme": true,
       "files": 12,
-      "lines": 3547
+      "lines": 3548
     },
     {
       "id": "prism",
@@ -162,7 +162,7 @@ window.SHOWCASE_REGISTRY = {
       "image": "assets/thumbs/prism.webp",
       "readme": true,
       "files": 7,
-      "lines": 1689
+      "lines": 1693
     },
     {
       "id": "infinitum",
@@ -182,7 +182,7 @@ window.SHOWCASE_REGISTRY = {
       "image": "assets/thumbs/infinitum.webp",
       "readme": true,
       "files": 8,
-      "lines": 1758
+      "lines": 1765
     },
     {
       "id": "atmos",
@@ -202,7 +202,7 @@ window.SHOWCASE_REGISTRY = {
       "image": "assets/thumbs/atmos.webp",
       "readme": true,
       "files": 7,
-      "lines": 1142
+      "lines": 1143
     }
   ]
 };

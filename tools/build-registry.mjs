@@ -63,6 +63,7 @@ for (const d of fs.readdirSync(root, { withFileTypes: true })) {
   const files = walk(dir).filter((f) => SRC.has(path.extname(f)));
   const lines = files.reduce((n, f) => n + fs.readFileSync(f, 'utf8').split('\n').length, 0);
   const hero = fs.existsSync(path.join(dir, 'screenshots', 'hero.png'));
+  if (!fs.readFileSync(path.join(dir, 'index.html'), 'utf8').includes('showcase-nav.js')) warnings.push(`${d.name}: index.html does not include ../assets/showcase-nav.js - visitors will have no in-app link back to the gallery`);
   const thumb = fs.existsSync(path.join(root, 'assets', 'thumbs', `${d.name}.webp`));
   if (!hero && !thumb) warnings.push(`${d.name}: no screenshots/hero.png or assets/thumbs/${d.name}.webp - the card will show a gradient only`);
 

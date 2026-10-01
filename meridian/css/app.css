@@ -316,7 +316,7 @@ span.cb .ico { stroke-width: 3; }
 .toast.in { opacity: 1; transform: none; }
 .toast .ic { margin-top: 1px; color: var(--accent); }
 .toast.ok .ic { color: var(--pos); }
-.toast.big .ic { color: var(--warn); }
+.toast.bigorder .ic { color: var(--warn); }
 .toast-b { display: flex; flex-direction: column; min-width: 0; }
 .toast-b b { font-size: var(--fs-md); }
 .toast-b span { color: var(--ink-2); font-size: var(--fs-sm); overflow-wrap: anywhere; }

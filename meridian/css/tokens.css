@@ -21,7 +21,12 @@
   /* density */
   --gap: 16px; --pad: 28px; --card-pad: 20px; --row-h: 46px; --ctl-h: 36px;
 }
-:root[data-density="compact"] { --gap: 12px; --pad: 22px; --card-pad: 14px; --row-h: 34px; --ctl-h: 32px; }
+:root[data-density="compact"] {
+  /* clearly denser: tighter spacing AND a smaller type scale, so the change is obvious at a glance */
+  --gap: 9px; --pad: 16px; --card-pad: 11px; --row-h: 28px; --ctl-h: 28px;
+  --fs-micro: 9.5px; --fs-xs: 10.5px; --fs-sm: 11.5px; --fs-md: 12.5px; --fs-lg: 13.5px;
+  --fs-xl: 16px; --fs-2xl: 20px; --fs-3xl: 26px; --fs-4xl: 34px;
+}
 
 /* ---------- light: warm paper ---------- */
 :root, :root[data-theme="light"] {

@@ -90,7 +90,11 @@
     const col = () => C || (C = makeColour());
     if (iterChanged) {
       if (S.quality.adaptive) {
-        if (RS.ema > 30) RS.scaleMove = Math.max(0.22, RS.scaleMove * 0.88); else if (RS.ema < 18) RS.scaleMove = Math.min(1, RS.scaleMove * 1.05);
+        // Thresholds are relative to the frame-rate cap (a capped loop would otherwise always look "slow").
+        // Dives and the auto-tour are cinematic, so they render at most 60% resolution unless the cap is 60.
+        const step = 1000 / S.quality.fpsCap, maxScale = (motion || app.tourOn) && S.quality.fpsCap < 60 ? 0.6 : 1;
+        if (RS.ema > step + 14) RS.scaleMove = Math.max(0.22, RS.scaleMove * 0.88); else if (RS.ema < step + 2) RS.scaleMove = Math.min(maxScale, RS.scaleMove * 1.05);
+        RS.scaleMove = Math.min(maxScale, RS.scaleMove);
       } else RS.scaleMove = 1;
       const s = RS.scaleMove, w = Math.max(32, Math.floor(W * s)), h = Math.max(32, Math.floor(H * s));
       R.iterate('data0', w, h, makeJob(), [0, 0]); R.shade('data0', w, h, 0, col());
@@ -423,6 +427,7 @@
   /* ---------------------------------------------------------------- main loop */
   function frame(now) {
     requestAnimationFrame(frame);
+    if (now - last < 1000 / S.quality.fpsCap - 2) return;   // frame-rate cap: skip this vsync, keep `last` so dt stays correct
     const dt = Math.min(0.1, (now - last) / 1000); last = now;
     if (RS.busy) return;
     frames++; if (now - fpsT > 700) { RS.fps = frames * 1000 / (now - fpsT); frames = 0; fpsT = now; }

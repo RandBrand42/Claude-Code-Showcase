@@ -116,7 +116,7 @@
     pal: clone(INF.PALETTES[7]),
     phase: 0, density: 2.0, cycle: false, cycleSpeed: 0.05,
     mode: 0, interior: 0, trapType: 1, trapParam: 0.5, glow: 0.35, relief: 1.6, light: { az: 2.2, el: 0.75 },
-    quality: { samples: 24, adaptive: true, iterMul: 1, pixelRatio: 'auto' },
+    quality: { samples: 24, adaptive: true, iterMul: 1, pixelRatio: 'auto', fpsCap: 30 },
   });
 
   INF.BOOKMARKS = [

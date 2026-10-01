@@ -1,4 +1,4 @@
-/* MERIDIAN - Live Orders: simulated real-time feed (an order every 1-3 s), orders-per-minute ticker, revenue today, big-order toasts. */
+/* MERIDIAN - Live Orders: simulated order feed (speed: real-time / relaxed / fast), orders-per-minute ticker, revenue today, big-order toasts. */
 (function (M) {
   'use strict';
   const U = M.U, D = M.D, S = M.S, V = M.V, UI = M.UI, h = U.h, st = S.st;
@@ -8,6 +8,8 @@
   const HOUR_TOT = HOUR_W.reduce((a, b) => a + b, 0);
   const cdf = (sec) => { const hr = sec / 3600; let a = 0; for (let i = 0; i < 24; i++) { if (hr >= i + 1) a += HOUR_W[i]; else if (hr > i) a += HOUR_W[i] * (hr - i); } return a / HOUR_TOT; };
   const BIG = 2500;
+  // [key, label, tooltip] - the speed of the simulated order stream
+  const PACES = [['real', 'Real-time', 'The pace of the day so far: orders arrive at the realistic rate'], ['relaxed', 'Relaxed', 'One order every 5-10 seconds'], ['fast', 'Fast', 'One order every 1-3 seconds (demo speed)']];
   const clock = (s) => { const x = Math.floor(s); return String(Math.floor(x / 3600) % 24).padStart(2, '0') + ':' + String(Math.floor(x / 60) % 60).padStart(2, '0') + ':' + String(x % 60).padStart(2, '0'); };
 
   /** Streaming area chart for orders per minute (last 3 minutes, one point per second). */
@@ -45,12 +47,15 @@
       host.classList.add('g-live');
       this.rng = U.rng(1618033);
       this.feed = []; this.n = 0; this.paused = false; this.bigDone = false; this.session = { rev: 0, orders: 0, ch: new Float64Array(5), sku: new Float64Array(D.SKUS.length) };
-      this.simSec = 13 * 3600 + 5 * 60 + 12; this.stamps = [];
+      this.simSec = 13 * 3600 + 5 * 60 + 12; this.simStart = this.simSec; this.stamps = [];
+      this.pace = U.store.get('livePace', 'relaxed');
+      this.paceSeg = h('div.seg.sm.lv-pace', { role: 'group', 'aria-label': 'Order feed speed' },
+        PACES.map((p) => h('button', { 'data-p': p[0], title: p[2], onclick: () => this.setPace(p[0]) }, p[1])));
 
       this.revEl = h('div.lv-rev.num'); this.revDelta = h('span.lv-plus');
       this.ordEl = h('b.num'); this.aovEl = h('b.num'); this.opmEl = h('b.num'); this.clockEl = h('span.lv-clock.num');
       this.pauseBtn = h('button.pbtn', { onclick: () => this.setPaused(!this.paused) });
-      const hero = V.card({ title: 'Revenue today', cls: 'lv-hero', actions: [h('span.livepill', h('i.livedot'), 'Live'), this.clockEl, this.pauseBtn] });
+      const hero = V.card({ title: 'Revenue today', cls: 'lv-hero', actions: [h('span.livepill', h('i.livedot'), 'Live'), this.clockEl, this.paceSeg, this.pauseBtn] });
       this.tickerHost = h('div.ticker');
       hero.body.append(h('div.lv-top', h('div', this.revEl, this.revDelta), h('div.lv-stats', h('div', h('span.micro', 'Orders today'), this.ordEl), h('div', h('span.micro', 'AOV today'), this.aovEl), h('div', h('span.micro', 'Orders / min'), this.opmEl))), h('p.micro.tk-h', 'Orders per minute, rolling'), this.tickerHost);
       this.ticker = new Ticker(this.tickerHost);
@@ -65,7 +70,22 @@
       this.paused_note = h('div.feed-p', UI.ic('pause', 14), 'Feed paused');
       feedCard.body.append(this.paused_note, this.list);
       host.append(hero.el, feedCard.el, mix.el, top.el);
+      this.markPace();
       this.setPaused(false, true);
+    },
+
+    /** Gap before the next simulated order, in ms, for the chosen speed. */
+    nextDelay() {
+      if (this.pace === 'fast') return 1000 + this.rng() * 2000;
+      if (this.pace === 'relaxed') return 5000 + this.rng() * 5000;
+      // Real-time: the day's actual arrival rate so far, with Poisson-style (exponential) gaps
+      const mean = (this.simStart / Math.max(1, this.base.ord)) * 1000;
+      return Math.min(mean * 4, Math.max(3000, -Math.log(1 - this.rng()) * mean));
+    },
+    markPace() { U.$$('button', this.paceSeg).forEach((b) => { const on = b.getAttribute('data-p') === this.pace; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); }); },
+    setPace(p) {
+      this.pace = p; U.store.set('livePace', p); this.markPace();
+      if (!this.paused && this.allowed) { clearTimeout(this.timer); this.timer = setTimeout(() => this.tickOrder(), 500); }
     },
 
     /** Re-derive baselines + allowed dimension sets from the current filters. */
@@ -103,7 +123,7 @@
       const nLines = ch === 3 ? 1 + Math.floor(r() * 3) : r() < 0.78 ? 1 : 2;
       const lines = []; let amount = 0;
       if (!silent) this.liveN = (this.liveN || 0) + 1;
-      const forceBig = !this.bigDone && this.liveN === 4 && !silent;
+      const forceBig = !this.bigDone && this.liveN === 3 && !silent;   // one guaranteed showcase "big order" early in the session
       for (let i = 0; i < nLines; i++) {
         const sku = forceBig && i === 0 ? D.SKUS.find((s) => s.name === 'Atlas Modular Sofa') : this.pickW(this.skuPool, this.skuW);
         const qty = ch === 3 ? 4 + Math.floor(r() * 18) : forceBig ? 1 : r() < 0.78 ? 1 : 2;
@@ -123,7 +143,7 @@
     rowEl(o, fresh) {
       const first = o.lines[0].sku, more = o.lines.length - 1;
       const col = M.color(U.hash(o.init) % 6);
-      return h('li.fr' + (fresh ? '.new' : '') + (o.amount >= BIG ? '.big' : ''), { 'data-id': o.id },
+      return h('li.fr' + (fresh ? '.new' : '') + (o.amount >= BIG ? '.bigorder' : ''), { 'data-id': o.id },
         h('span.av', { style: { '--av': col } }, o.init),
         h('div.fr-m', h('b', o.name), h('span', (o.lines[0].qty > 1 ? o.lines[0].qty + '× ' : '') + first.name + (more ? ' +' + more + ' more' : ''))),
         h('div.fr-t', h('span.ctag', h('i.dot', { style: { background: M.color(o.ch) } }), D.CHANS[o.ch].name), h('span.rcode', D.REGIONS[o.reg].key)),
@@ -142,8 +162,8 @@
       while (this.list.children.length > 40) this.list.lastChild.remove();
       this.stamps.push(this.simSec);
       this.renderStats(false, o);
-      if (o.amount >= BIG) UI.toast(U.money(o.amount) + ' · ' + D.CHANS[o.ch].name + ' · ' + D.REGIONS[o.reg].key + ' · ' + o.lines[0].sku.name + (o.lines.length > 1 ? ' +' + (o.lines.length - 1) : ''), { title: 'Big order from ' + o.name, icon: 'bolt', tone: 'big', ms: 5200 });
-      this.timer = setTimeout(() => this.tickOrder(), 1000 + this.rng() * 2000);
+      if (o.amount >= BIG) UI.toast(U.money(o.amount) + ' · ' + D.CHANS[o.ch].name + ' · ' + D.REGIONS[o.reg].key + ' · ' + o.lines[0].sku.name + (o.lines.length > 1 ? ' +' + (o.lines.length - 1) : ''), { title: 'Big order from ' + o.name, icon: 'bolt', tone: 'bigorder', ms: 5200 });
+      this.timer = setTimeout(() => this.tickOrder(), this.nextDelay());
     },
 
     renderStats(instant, order) {

@@ -7,7 +7,7 @@
   const TAU = Math.PI * 2;
 
   /* ------------------------------------------------------------ persistence */
-  const save = { stars: {}, best: {}, mute: false, daily: {} };
+  const save = { stars: {}, best: {}, mute: false, daily: {}, hum: false };
   try { Object.assign(save, JSON.parse(localStorage.getItem('prism.v1') || '{}')); } catch (e) { /* storage unavailable */ }
   const persist = () => { try { localStorage.setItem('prism.v1', JSON.stringify(save)); } catch (e) { /* ignore */ } };
 
@@ -42,7 +42,10 @@
     win: () => [0, 4, 7, 12, 16].forEach((s, i) => tone(523 * Math.pow(2, s / 12), 1.8, 'sine', 0.15, 0, i * 0.09)),
     hint: () => { tone(660, 0.2, 'sine', 0.12); tone(880, 0.3, 'sine', 0.1, 0, 0.1); },
   };
-  const setHum = n => { if (AC && humG) humG.gain.setTargetAtTime(Math.min(0.12, 0.015 + 0.02 * n), AC.currentTime, 0.4); };
+  // The low drone is optional ambience (off by default): it swells with the number of lit crystals.
+  let humN = 0;
+  const setHum = n => { humN = n; if (AC && humG) humG.gain.setTargetAtTime(save.hum ? Math.min(0.12, 0.015 + 0.02 * n) : 0, AC.currentTime, 0.4); };
+  const setAmbience = on => { save.hum = on; persist(); const s = $('#humState'); if (s) s.textContent = on ? 'on' : 'off'; setHum(humN); };
   function setMute(m) {
     save.mute = m; persist(); document.body.classList.toggle('muted', m); $('#sndState').textContent = m ? 'off' : 'on';
     if (master) master.gain.setTargetAtTime(m ? 0 : 0.55, AC.currentTime, 0.05);
@@ -589,7 +592,7 @@
       return;
     }
     switch (b.dataset.act) {
-      case 'mute': setMute(!save.mute); break; case 'undo': undo(); break; case 'redo': redo(); break; case 'hint': hint(); break;
+      case 'mute': setMute(!save.mute); break; case 'ambience': setAmbience(!save.hum); break; case 'undo': undo(); break; case 'redo': redo(); break; case 'hint': hint(); break;
       case 'reset': reset(); break; case 'back': go(G && G.mode === 'level' ? 'map' : 'title'); break; case 'pause': openOv('#pause'); break;
       case 'resume': closeOverlays(); break; case 'help': openOv('#help'); break; case 'closehelp': closeOverlays(); break;
       case 'next': next(); break; case 'replay': reset(); break; case 'export': exportCode(); break; case 'import': importCode(); break;
@@ -600,7 +603,7 @@
   /* ------------------------------------------------------------------- boot */
   window.addEventListener('resize', resize);
   document.addEventListener('visibilitychange', () => { if (AC) document.hidden ? AC.suspend() : AC.resume(); });
-  document.body.classList.toggle('muted', save.mute); $('#sndState').textContent = save.mute ? 'off' : 'on';
+  document.body.classList.toggle('muted', save.mute); $('#sndState').textContent = save.mute ? 'off' : 'on'; $('#humState').textContent = save.hum ? 'on' : 'off';
   resize(); titleMeta(); requestAnimationFrame(frame);
   // test hooks (used by tests/ui-play.mjs)
   window.PrismDebug = { state: () => G, res: () => res, cellXY: (x, y) => { const r = V.cv.getBoundingClientRect(), c = center(x, y); return [r.left + c[0], r.top + c[1]]; }, play: playLevel, daily: playDaily, sandbox: playSandbox, save, screen: () => screen };

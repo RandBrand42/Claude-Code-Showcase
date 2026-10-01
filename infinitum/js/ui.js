@@ -143,6 +143,7 @@
         const root = h('div', null, head('Render quality', 'progressive'));
         root.append(h('div', { class: 'sec' }, h('label', null, 'Refinement samples'), segment([[1, 'Draft'], [8, 'Fine'], [24, 'Ultra'], [96, 'Max']], () => S.quality.samples, (v) => { S.quality.samples = v; app.qualityChanged(); }, 'Samples')));
         root.append(h('div', { class: 'sec' }, h('label', null, 'Pixel ratio'), segment([['1', 'Eco 1×'], ['auto', 'Auto'], ['2', 'Sharp 2×']], () => S.quality.pixelRatio, (v) => { S.quality.pixelRatio = v; app.resize(); }, 'Pixel ratio')));
+        root.append(h('div', { class: 'sec' }, h('label', null, 'Frame rate (lower = cooler GPU)'), segment([[60, 'Smooth 60'], [30, 'Balanced 30'], [20, 'Eco 20']], () => S.quality.fpsCap, (v) => { S.quality.fpsCap = v; }, 'Frame rate cap')));
         root.append(h('div', { class: 'sec' }, toggle('Adaptive resolution while moving', () => S.quality.adaptive, (v) => { S.quality.adaptive = v; }),
           slider('Iteration depth', 0.4, 3, 0.05, () => S.quality.iterMul, (v) => { S.quality.iterMul = v; app.iterChanged(); }, (v) => v.toFixed(2) + '×')));
         const st = h('div', { class: 'stats', id: 'qstats' }); root.append(st); root.stats = st;

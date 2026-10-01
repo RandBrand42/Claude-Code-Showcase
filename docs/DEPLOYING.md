@@ -78,8 +78,17 @@ Each app is a self-contained top-level folder. To add one:
    | `order` | no | lower sorts first (default 1000, so new apps land at the end) |
    | `feature` | no | `true` gives the card a featured treatment |
 
-3. Add `my-new-app/screenshots/hero.png` (about 1440x900) and a `README.md` (optional but expected).
-4. Rebuild the gallery data and thumbnail:
+3. Add the shared gallery link as the last thing before `</body>`, in a corner that does not collide with the app's own controls.
+   `data-pos` is one of `top-left`, `top-center`, `top-right`, `bottom-left`, `bottom-center`, `bottom-right`; `data-offset="x,y"` nudges it;
+   `data-pos-mobile` / `data-offset-mobile` apply on phones, where `"none"` hides it:
+
+   ```html
+   <script src="../assets/showcase-nav.js" data-pos="bottom-right"></script>
+   ```
+
+   The registry step warns if an app is missing it.
+4. Add `my-new-app/screenshots/hero.png` (about 1440x900) and a `README.md` (optional but expected).
+5. Rebuild the gallery data and thumbnail:
 
    ```bash
    npm run thumbs      # makes assets/thumbs/my-new-app.webp from the hero screenshot (needs Edge or Chrome locally)
@@ -101,6 +110,7 @@ If a manifest is invalid the build **fails with a message** instead of silently 
 | `package.json` | Convenience scripts only (`build`, `registry`, `thumbs`, `serve`); no dependencies |
 | `site.config.json` | Site title and the GitHub repo URL used for README links |
 | `<app>/app.json` | Per-app metadata for the gallery |
+| `assets/showcase-nav.js` | Shared "back to the gallery" pill; one script tag per app |
 | `registry.js` | **Generated** list of apps and code statistics read by `index.html` |
 | `assets/thumbs/*.webp` | **Generated** 960 px gallery thumbnails (about 450 KB for all nine, against about 6 MB of PNGs) |
 | `tools/build-registry.mjs` | Scans for apps, validates manifests, writes `registry.js` |
