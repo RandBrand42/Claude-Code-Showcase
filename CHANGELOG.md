@@ -68,5 +68,16 @@ Also: Orbital and Mnemo gained inline favicons (they logged a 404 for `/favicon.
 
 **Not verified:** the real folder picker, a real OneDrive folder, Copilot indexing of `.md`, Firefox, concurrent editors. **Caution:** real notes in a synced folder follow OneDrive's sharing rules.
 
+## Batch B5 - Atmos: live weather, alerts, news and video
+
+| Area | Change | Evidence |
+|---|---|---|
+| **Atmos** | 18 **LIVE** cities (Dallas, Fort Worth, San Diego, Oceanside, Washington D.C., Seattle, Miami, Orlando, Tampa, Jacksonville, Charlotte, Raleigh, Wilmington, Tokyo, Osaka, Sapporo, Fukuoka, Naha) read real hourly data from Open-Meteo; the 7 other cities stay clearly marked **DEMO**. Real sunrise/sunset, daylight-saving-correct clocks, sky effects driven by real conditions. | 22 unit tests; live run for all 18 cities; page driven over http and file: |
+| **Atmos** | **Alerts and hazards** card and badge: NWS alerts, JMA warnings (stale reports ignored), USGS earthquakes near the city. Disclaimer that it is not an official warning service. | Real Dallas Flood Watch displayed; JMA stale-report path observed live; parsing unit-tested |
+| **Atmos** | **Local news and video**: new serverless function `api/feeds.js` (+ `lib/feeds-core.js`) reads a fixed allowlist of station RSS feeds and YouTube channel feeds; text sanitised, links restricted to each source's own domain; click-to-play sandboxed embeds, nothing from YouTube loads before play. `tools/serve.mjs` now runs `/api/*` locally. | 18 unit tests; live run of every city's sources; video tile turned into a sandboxed player frame |
+| **Repo** | `vercel.json`: function duration and `/api` headers. New top-level `api/` and `lib/` folders. | |
+
+**Not verified:** the Vercel deployment of the function, embeddability and live-stream status of each YouTube channel, JMA with a real active warning, Firefox / Safari. **Licence note:** Open-Meteo's free tier is non-commercial and needs attribution (included).
+
 ### Not yet done (from the same feedback list)
-Atmos live data, alerts and news/video feeds.
+Nothing outstanding from that list. Remaining ideas: a marked-up Vercel preview check, an NWS forecast-discussion panel, more cities on request.

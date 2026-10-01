@@ -12,11 +12,11 @@ window.SHOWCASE_REGISTRY = {
     ],
     [
       "source files",
-      108
+      111
     ],
     [
       "lines of code",
-      26052
+      26691
     ],
     [
       "runtime dependencies",
@@ -189,7 +189,7 @@ window.SHOWCASE_REGISTRY = {
       "name": "Atmos",
       "kind": "Lifestyle",
       "tagline": "Weather you can feel",
-      "description": "A procedural living sky with rain, snow, lightning and a moving sun and moon, plus a 48-hour time scrubber that morphs the whole scene as you drag.",
+      "description": "Live forecasts, alerts and local news for cities in Texas, California, Washington, Florida, North Carolina and Japan, plus demo cities. A procedural living sky with rain, snow, lightning and a moving sun and moon, plus a 48-hour time scrubber that morphs the whole scene as you drag.",
       "tech": [
         "Procedural sky",
         "Particles",
@@ -201,8 +201,8 @@ window.SHOWCASE_REGISTRY = {
       "feature": false,
       "image": "assets/thumbs/atmos.webp",
       "readme": true,
-      "files": 7,
-      "lines": 1143
+      "files": 10,
+      "lines": 1782
     }
   ]
 };

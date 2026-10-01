@@ -49,7 +49,8 @@
     const nav = $('#cities'); nav.innerHTML = '';
     chipEls = D.cities.map((c, i) => {
       const b = document.createElement('button'); b.className = 'chip'; b.dataset.i = i; b.setAttribute('aria-label', c.name);
-      b.innerHTML = `<div class="orb"></div><div class="ground"></div><div class="cn">${c.name}</div><div class="ct"></div><div class="cd"></div><span class="ci"></span>`;
+      b.innerHTML = `<div class="orb"></div><div class="ground"></div><div class="cn"></div><div class="ct"></div><div class="cd"></div><span class="ci"></span><span class="ctag"></span>`;
+      $('.cn', b).textContent = c.name; $('.ctag', b).textContent = c.live ? 'LIVE' : 'DEMO'; b.classList.add(c.live ? 'is-live' : 'is-demo');
       b.addEventListener('click', () => UI.cb.city(i)); nav.appendChild(b);
       return { b, ct: $('.ct', b), cd: $('.cd', b), ci: $('.ci', b), orb: $('.orb', b), key: '' };
     });
@@ -58,7 +59,8 @@
     D.cities.forEach((c, i) => {
       const e = chipEls[i], L = D.localNow(c) + t, w = D.sample(c, L), hod = ((L % 24) + 24) % 24;
       e.b.style.background = A.Sky.css(w.alt, w, w.theta < 0.5); e.b.setAttribute('aria-current', i === cur ? 'true' : 'false');
-      e.ct.textContent = `${F.hour(hod)} · ${w.cond.label}`; e.cd.textContent = F.temp(w.temp);
+      const pending = c.live && !D.override && !(A.Live && A.Live.has(c));      // a live city whose real data has not arrived: do not show invented numbers as if real
+      e.ct.textContent = pending ? `${F.hour(hod)} · ${A.Live && A.Live.status(c) === 'error' ? 'Offline' : 'Loading\u2026'}` : `${F.hour(hod)} · ${w.cond.label}`; e.cd.textContent = pending ? '' : F.temp(w.temp);
       if (e.key !== w.cond.icon) { e.key = w.cond.icon; e.ci.innerHTML = A.icon(w.cond.icon); }
       e.b.classList.toggle('rainy', w.rain > 0.15 || w.storm > 0.3); e.b.classList.toggle('snowy', w.snow > 0.15);
       const moon = w.night, th = moon ? clamp(w.moonTheta, 0, 1) : clamp(w.theta, 0, 1);
@@ -144,7 +146,7 @@
     const pa = D.sample(f.city, w.L + 3).pressure - D.sample(f.city, w.L - 3).pressure, trend = pa > 1.2 ? 'Rising' : pa < -1.2 ? 'Falling' : 'Steady';
     g('tPres', 'pr').firstChild.nodeValue = Math.round(w.pressure); g('tPres', 'parrow').style.transform = `rotate(${trend === 'Rising' ? 0 : trend === 'Falling' ? 180 : 90}deg)`; g('tPres', 'psub').textContent = `${trend} over 6 h`;
     const v = F.dist(w.vis); g('tVis', 'vis').textContent = v; g('tVis', 'visdot').style.left = clamp(w.vis / 25, 0.02, 0.98) * 100 + '%'; g('tVis', 'vsub').textContent = w.vis > 15 ? 'Crystal clear' : w.vis > 6 ? 'Good' : w.vis > 2 ? 'Hazy' : 'Poor, low cloud or fog';
-    g('tAqi', 'aqi').textContent = w.aqi; g('tAqi', 'aqidot').style.left = clamp(w.aqi / 200, 0.02, 0.98) * 100 + '%'; g('tAqi', 'asub').textContent = w.aqi < 50 ? 'Good' : w.aqi < 100 ? 'Moderate' : w.aqi < 150 ? 'Unhealthy for sensitive groups' : 'Unhealthy';
+    const hasAqi = isFinite(w.aqi); g('tAqi', 'aqi').textContent = hasAqi ? w.aqi : '--'; g('tAqi', 'aqidot').style.left = (hasAqi ? clamp(w.aqi / 200, 0.02, 0.98) : 0.5) * 100 + '%'; g('tAqi', 'asub').textContent = !hasAqi ? 'Not available' : w.aqi < 50 ? 'Good' : w.aqi < 100 ? 'Moderate' : w.aqi < 150 ? 'Unhealthy for sensitive groups' : 'Unhealthy';
     const th = clamp(w.theta, 0, 1), sp = sunPoint(th); const dot = g('tSun', 'sundot'); const day = w.alt > -0.8;
     dot.setAttribute('cx', sp[0]); dot.setAttribute('cy', day ? sp[1] : 88); dot.setAttribute('opacity', day ? 1 : 0.35);
     g('tSun', 'sunpath').style.strokeDasharray = 1; g('tSun', 'sunpath').setAttribute('pathLength', 1); g('tSun', 'sunpath').style.strokeDashoffset = 1 - th;

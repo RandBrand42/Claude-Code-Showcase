@@ -242,8 +242,9 @@ anti-aliasing and tiled 4096-pixel export. About 1,700 lines.
 **The pitch.** A weather app where the sky *is* the interface. Behind frosted-glass forecasts, a living sky moves
 through dawn, day, golden hour, dusk and night, with drifting clouds, rain, snow, fog and lightning, and a sun and
 moon that travel across it. Drag the scrubber along the bottom and the next 48 hours play out: the sky, the
-temperature and the forecast all morph together. All weather is invented, so it is a design showcase, not a
-forecast.
+temperature and the forecast all morph together. 18 cities (Texas, California, Washington, Florida, North
+Carolina, Japan) now show **real** forecasts, alerts and local news and video; the other 7 are marked DEMO and
+are invented. It is a design showcase and not an official warning service.
 
 **Try this first.** Drag the bottom time bar. Press `C` to cycle cities, `D` for the scene panel (force a
 thunderstorm or snow), and `Space` for a time-lapse of a full day.
@@ -584,6 +585,9 @@ The harness fix passed a syntax check and the batch that followed was clean, but
   hidden. Clouds are noise-puff tiles tinted by sun colour with `source-atop`, rendered at half resolution.
 - **Adaptive ink.** The sky's mid-colour luminance selects white ink on dark glass or deep-blue ink on pale glass,
   with hysteresis.
+- **Live data (later round).** `js/live.js` turns Open-Meteo hourly data into the same weather object the synthetic
+  function returns, so the sky, scrubber and charts work unchanged; alerts come from NWS, JMA and USGS; news and
+  video come from `api/feeds.js`, a serverless function with a fixed source allowlist. See the Atmos README.
 - **Self-check.** `Data.selfCheck()` verifies, over 80 city-days, that hourly extremes equal daily hi / lo and that
   sunrise precedes sunset.
 

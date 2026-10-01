@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>ATMOS - weather you can feel</title>
-<meta name="description" content="A procedural-sky weather app. All weather is synthetic, seeded mock data.">
+<meta name="description" content="A procedural-sky weather app with live forecasts, alerts and local news for cities in Texas, California, Washington, Florida, North Carolina and Japan, plus demo cities.">
 <meta name="theme-color" content="#0b1330">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231d4f9c'/%3E%3Ccircle cx='16' cy='20' r='7' fill='%23ffd36a'/%3E%3Crect y='20' width='32' height='12' fill='%230b1330'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="css/style.css">
@@ -38,11 +38,16 @@
         <div class="cond-row"><span class="cond-ic" id="hIcon"></span><span class="cond" id="hCond">&nbsp;</span></div>
         <div class="meta-row"><span>Feels like <b id="hFeels">--</b></span><span class="dot"></span><span>H <b id="hHi">--</b></span><span>L <b id="hLo">--</b></span></div>
         <p class="summary" id="hSummary"></p>
-        <div class="badges"><span class="badge" id="hMoon"></span><span class="badge warn" id="hScene" hidden>Scene override</span></div>
+        <div class="badges"><span class="badge live" id="hLive" role="status"></span><button class="badge alert" id="hAlerts" type="button" hidden></button><span class="badge" id="hMoon"></span><span class="badge warn" id="hScene" hidden>Scene override</span></div>
       </div>
     </section>
 
     <section class="grid" id="grid">
+      <article class="card glass c-alerts" id="cAlerts" style="--i:1" hidden aria-label="Weather alerts">
+        <div class="card-h"><h2 class="micro">Alerts &amp; hazards</h2><span class="al-meta" id="alMeta"></span></div>
+        <div id="alList" class="al-list"></div>
+        <p class="al-disc">Informational only. This app is not an official warning service: in an emergency follow your local authorities (weather.gov, jma.go.jp).</p>
+      </article>
       <article class="card glass c-hourly" style="--i:1"><h2 class="micro">Hourly forecast</h2><div class="hourly" id="hourly"></div></article>
       <article class="card glass c-daily" style="--i:2"><h2 class="micro">10-day forecast</h2><div class="daily" id="daily"></div></article>
       <article class="card glass c-chart" style="--i:3"><div class="card-h"><h2 class="micro">Next 48 hours</h2><div class="legend"><span><i class="lg-t"></i>Temperature</span><span><i class="lg-p"></i>Chance of rain</span></div></div><div class="chart" id="chart"></div></article>
@@ -54,7 +59,12 @@
       <article class="card glass tile" style="--i:9" id="tAqi"></article>
       <article class="card glass tile wide" style="--i:10" id="tSun"></article>
       <article class="card glass tile wide" style="--i:11" id="tPrec"></article>
-      <p class="fineprint">All readings are synthetic, seeded mock data generated in your browser. No real forecasts, no network requests.</p>
+      <article class="card glass c-news" id="cNews" style="--i:12" hidden aria-label="Local news and video">
+        <div class="card-h"><h2 class="micro">Local news &amp; video</h2><div class="seg" id="nwTabs" role="group" aria-label="News or video"><button data-t="news" aria-pressed="true">News</button><button data-t="video" aria-pressed="false">Video</button></div></div>
+        <div id="nwBody" class="nw-body"></div>
+        <p class="al-disc">Headlines and videos belong to the stations and channels shown and open on their own sites.</p>
+      </article>
+      <p class="fineprint" id="fineLive">&nbsp;</p>
     </section>
   </main>
 
@@ -93,14 +103,16 @@
       <dt><kbd>/</kbd></dt><dd>Search cities</dd>
       <dt><kbd>?</kbd></dt><dd>This help</dd>
     </dl>
-    <p class="fineprint">All weather is procedurally generated mock data.</p>
+    <p class="fineprint">LIVE cities use real forecasts; DEMO cities and weather scenes are procedurally generated.</p>
   </div>
 </div>
 
 <script src="js/data.js"></script>
 <script src="js/icons.js"></script>
+<script src="js/live.js"></script>
 <script src="js/sky.js"></script>
 <script src="js/ui.js"></script>
+<script src="js/panels.js"></script>
 <script src="js/app.js"></script>
 <script src="../assets/showcase-nav.js" data-pos="bottom-right" data-pos-mobile="bottom-left" data-offset-mobile="4,4"></script>
 </body>

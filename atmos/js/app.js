@@ -38,9 +38,16 @@
     Sky.setCity(city().sky, city().seed);
   }
   function selectCity(i) {
-    S.ci = (i + D.cities.length) % D.cities.length; rebuild(true);
+    S.ci = (i + D.cities.length) % D.cities.length; rebuild(true); live(city());
     try { localStorage.setItem('atmos.city', city().id); } catch (e) { /* storage unavailable */ }
     const chip = document.querySelectorAll('.chip')[S.ci]; if (chip) chip.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', inline: 'center', block: 'nearest' });
+  }
+  // live data for a city: fetch weather (batched with the nearest cities), alerts, and refresh the panels when something arrives
+  function live(c) {
+    A.Panels.select(c);
+    if (!c.live) return;
+    const near = D.cities.filter((x) => x.live && x !== c && x.country === c.country).slice(0, 5);
+    A.Live.load([c].concat(near));
   }
   function setScene(id, hourOverride) {
     const sc = SCENES.find((s) => s.id === id) || SCENES[0]; sceneId = sc.id;
@@ -100,7 +107,11 @@
     $('#sceneGrid').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) setScene(b.dataset.id); });
     let ci = 0; try { const saved = localStorage.getItem('atmos.city'); ci = Math.max(0, D.cities.findIndex((c) => c.id === saved)); } catch (e) { /* ignore */ }
     const pc = P.get('city'); if (pc) { const k = D.cities.findIndex((c) => c.id === pc); if (k >= 0) ci = k; }
-    S.ci = ci; rebuild(false);
+    A.Live.refreshZones(); A.Panels.init();
+    A.Live.on((type, id) => { if (type === 'weather') { if (id === city().id) { rebuild(true); A.Panels.badge(city()); } S.lastChips = 0; } });
+    S.ci = ci; rebuild(false); live(city());
+    setTimeout(() => A.Live.load(D.cities.filter((x) => x.live)), 4000);          // fill in the other cities' chips shortly after the first paint
+    document.addEventListener('visibilitychange', () => { if (!document.hidden && city().live) A.Live.load([city()]); });
     if (P.get('scene')) setScene(P.get('scene'));
     if (P.get('hour')) { setHour(+P.get('hour')); rebuild(false); }
     if (P.get('t')) setT(+P.get('t'));

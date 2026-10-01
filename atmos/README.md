@@ -6,7 +6,7 @@
 
 ## Purpose
 
-ATMOS is a showcase of a design-led front end built with **zero dependencies**: no CDN, no fonts, no images, no weather API. It is for anyone who wants to see how far plain HTML, CSS, SVG and a 2D canvas can go toward "award-winning weather app". It demonstrates a continuous procedural sky (time of day x weather condition), glass UI that adapts to the sky's brightness, and a signature interaction: drag through the next 48 hours and watch the sun, moon, clouds, rain and temperature morph smoothly.
+ATMOS is a showcase of a design-led front end built with **zero dependencies**: no CDN, no fonts, no images. The original build had no weather API at all; live data was added later (see "Live weather" below). It is for anyone who wants to see how far plain HTML, CSS, SVG and a 2D canvas can go toward "award-winning weather app". It demonstrates a continuous procedural sky (time of day x weather condition), glass UI that adapts to the sky's brightness, and a signature interaction: drag through the next 48 hours and watch the sun, moon, clouds, rain and temperature morph smoothly.
 
 ## Feature tour
 
@@ -37,6 +37,54 @@ ATMOS is a showcase of a design-led front end built with **zero dependencies**: 
 **Weather scenes** (`D` key or the sliders button): force clear day, golden hour, dusk, clear night, dawn, rain, thunderstorm, snow, fog, heatwave, overcast; sliders for time of day and wind; a "Strike" button for lightning.
 
 ![Mobile](screenshots/mobile.png)
+
+## Live weather, alerts, news and video (added in the second round)
+
+![Live Dallas](screenshots/live-dallas.png)
+
+Cities marked **LIVE** now show real data; cities marked **DEMO** are still the seeded synthetic ones. Live cities: Dallas, Fort Worth (Texas); San Diego,
+Oceanside (California); Washington, D.C.; Seattle (Washington); Miami, Orlando, Tampa, Jacksonville (Florida); Charlotte, Raleigh, Wilmington (North Carolina);
+Tokyo, Osaka, Sapporo, Fukuoka, Naha (Japan). The search box matches states, so "florida" finds the four Florida cities.
+
+- **Weather:** hourly forecast, 10 days, sun position (real sunrise and sunset), wind, UV, pressure, visibility, humidity and US AQI from **Open-Meteo**. The sky,
+  the rain, snow, fog and lightning are driven by the real conditions (WMO weather codes plus measured precipitation). The scrubber, the 10-day list and
+  the charts all work on the real data. Weather *scenes* (the sliders panel) still force an invented sky, clearly badged, and "Live" returns to the real one.
+- **Alerts and hazards:** a card (and a badge under the temperature) for **US National Weather Service** alerts at the city's coordinates, **Japan
+  Meteorological Agency** warnings for the matching region, and **USGS** earthquakes of M4.5+ within 400 km in the last day. Each shows severity, area, times,
+  what to do and a link to the official source.
+- **Local news and video:** headlines from the stations' own RSS feeds (ABC, NBC, CBS and FOX affiliates and others per city; the Japan Times, Japan Today and
+  NHK for Japan) and recent videos from the stations' YouTube channels, with links to each channel's live stream. Nothing from YouTube loads until you press
+  play, and the player is the privacy-enhanced embed in a sandboxed frame.
+
+![News and video](screenshots/live-news-video.png)
+
+**How it is built.** Browsers can read Open-Meteo, NWS, JMA and USGS directly (they send CORS headers), so those calls come from the page
+(`js/live.js`: one request per batch of up to six cities, answers cached for ten minutes per tab, a refresh never drops good data back to the simulation).
+Station feeds do not send CORS headers, so news and video go through a small serverless function, `api/feeds.js`, whose logic is in `lib/feeds-core.js`:
+the browser sends only a short city id, the function reads from a fixed list of sources (so it cannot be used as an open proxy), accepts only https links on
+each source's own domain, reduces all text to plain text, caps size and time per source, and lets one failing source fail alone. Results are cached for five
+minutes at the edge. `node tools/serve.mjs` runs the same function locally. Opened straight from a folder (`file://`), weather and alerts work and the news card
+explains that it needs the hosted version.
+
+![Live on a phone](screenshots/live-mobile.png)
+
+**Rules and caveats to know before relying on it**
+- **Not an official warning service.** The page says so next to the alerts. In an emergency follow local authorities (weather.gov, jma.go.jp).
+- **Open-Meteo's free tier is for non-commercial use** and requires attribution (shown in the page footer). Any commercial or production use needs their paid plan.
+  NWS and USGS data are US government and public domain. News and video belong to the stations; the app only links to them.
+- **Japan warnings:** the warning-code names are mapped from JMA's published code table by hand, and a report older than 48 hours is ignored on purpose. When I tested
+  it, the JMA files for the regions returned reports dated months earlier, so no JMA warnings were shown for Japan and the card says why. The positive path is covered
+  by unit tests with sample data, not by a live warning.
+- Some stations rotate or change feed addresses; a source that stops answering simply disappears from the list (the card shows what came back).
+- The weather requests send your IP address to those providers, as any web page that calls an API does.
+
+**Verified:** 22 unit tests for the data layer (hourly series, interpolation, daylight-saving clocks, weather-code mapping, alert parsing, stale-report rejection,
+junk input) and 18 for the feed collector (text hygiene, link allowlist, off-site and look-alike hosts, javascript: links, timeouts, one-source failure); a live
+run of every source for every city (18 of 18 cities returned weather; 16 of 18 returned all feeds, the others only slow ones timing out at 7 s); the page driven in
+headless Edge over http and from a file: live badge, real Dallas rain and a real Flood Watch, news and video tabs, a click turning a video tile into a sandboxed player
+frame, Tokyo, Miami, a demo city hiding the live panels, a scene override and back, search by state, desktop and phone width, 0 console errors.
+**Not verified:** the Vercel deployment of `api/feeds.js` (it runs under the same handler locally, not on Vercel itself); that every YouTube channel allows
+embedding or is currently live; JMA with a real active warning; Firefox and Safari; whether the weather matches what you see out of the window.
 
 ## Run it
 

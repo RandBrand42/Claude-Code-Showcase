@@ -12,6 +12,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const port = +(process.argv[2] || process.env.PORT || 8080);
@@ -22,7 +23,15 @@ const TYPES = {
   '.ico': 'image/x-icon', '.txt': 'text/plain; charset=utf-8', '.wasm': 'application/wasm',
 };
 
+const require = createRequire(import.meta.url);
+
+// /api/* runs the same serverless functions Vercel will run (api/feeds.js and friends), so news and video can be tested locally
 const server = http.createServer((req, res) => {
+  if (/^\/api\/[a-z-]+(\?|$)/.test(req.url)) {
+    const name = req.url.slice(5).split('?')[0];
+    const file = path.join(root, 'api', name + '.js');
+    if (fs.existsSync(file)) { Promise.resolve(require(file)(req, res)).catch(() => { if (!res.headersSent) res.writeHead(500); res.end('Function error'); }); return; }
+  }
   let rel;
   try { rel = decodeURIComponent(new URL(req.url, 'http://x').pathname); } catch { res.writeHead(400).end('Bad request'); return; }
   let file = path.normalize(path.join(root, rel));
