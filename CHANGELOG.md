@@ -58,5 +58,15 @@ Also: Orbital and Mnemo gained inline favicons (they logged a 404 for `/favicon.
 
 **Not verified:** contrast ratios of the white accents, other browsers, touch. **Brand note:** the imagery is deliberately generic; legal / brand review is advised if it leaves internal demo use.
 
+## Batch B4 - Mnemo: folder sync for OneDrive, Claude and Copilot
+
+| Area | Change | Evidence |
+|---|---|---|
+| **Mnemo** | New **Sync to a folder** (Chrome / Edge): one `.md` file per note with front matter, a generated `_Mnemo index.md`, push after edits, pull of outside edits, newer-wins with the old body kept in History, **never deletes a file**. `.md` / `.txt` switch. | 17 unit tests; end-to-end run against an origin-private folder (first sync, idle re-sync, outside edit, new plain file, rename, stale duplicate, `.txt`, disconnect); 0 console errors |
+| **Mnemo** | New **Import Markdown files** (any browser, including Firefox) to pair with the existing Markdown ZIP export. | Run in the same scenario |
+| **Mnemo** | `Mnemo.store.applyExternal` (external edits keep history). | Covered by the scenario |
+
+**Not verified:** the real folder picker, a real OneDrive folder, Copilot indexing of `.md`, Firefox, concurrent editors. **Caution:** real notes in a synced folder follow OneDrive's sharing rules.
+
 ### Not yet done (from the same feedback list)
-Atmos live data, alerts and news/video feeds, Mnemo OneDrive/Claude/Copilot access.
+Atmos live data, alerts and news/video feeds.

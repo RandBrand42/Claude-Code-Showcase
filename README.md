@@ -688,7 +688,7 @@ file downloads (PNG, JSON, WAV, WebM, CSV, ZIP) end to end.
 - Orbital galaxies have no self-gravity; collisions are inelastic merges only.
 - Neuron Forge is single-output binary classification only and trains on the main thread.
 - Resonance has one melodic track and uses the deprecated `ScriptProcessorNode` for recording.
-- Mnemo has no sync; `localStorage` caps notes at roughly 5 MB.
+- Mnemo keeps notes in the browser unless folder sync is on (Chrome / Edge only); `localStorage` caps notes at roughly 5 MB.
 
 **Documentation caveat.** Three READMEs (Orbital, Prism, Infinitum) contain original agent text that is partly
 superseded; each now opens with or contains an update note saying so. Meridian's README was written afterwards.

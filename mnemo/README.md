@@ -40,6 +40,38 @@ The demo notebook holds 36 invented notes about *how to think with notes*: Zette
 
 ![Dark split view](screenshots/split-dark.png) ![Phone layout](screenshots/mobile.png)
 
+## Folder sync: OneDrive, Claude and Copilot
+
+Mnemo can mirror the notebook to a normal folder of Markdown files, so the same notes can be opened by other tools.
+
+- **Chrome and Edge:** menu, **Sync to a folder (OneDrive)...**, then choose a folder (for example one inside your OneDrive). The browser asks permission once.
+  Each note becomes one file, `Note title.md`, starting with a small front-matter block (`mnemo-id`, `title`, `created`, `updated`, `pinned`, `tags`)
+  followed by the note's Markdown, with `[[wiki links]]` untouched. A generated `_Mnemo index.md` lists every note. Changes in Mnemo are written about
+  three seconds after you stop typing; the folder is checked for outside edits every 20 seconds and when you return to the tab. After closing the browser, the
+  menu shows **Reconnect folder** (one click; browsers require a fresh permission per session).
+- **Firefox and every other browser:** the File System Access API is not available, so use **Export Markdown bundle (.zip)** to get the same files, and
+  **Import Markdown files...** to bring edited files back. Nothing else about the app changes.
+- **Claude:** point Claude at the folder (a Claude Code or Cowork session with that folder added, or a OneDrive connector) and it can read, search and edit the notes
+  as ordinary files. Because the index file explains the format, a fresh session can work out how the notebook is laid out.
+- **Copilot:** Microsoft 365 Copilot works from files in OneDrive and SharePoint. Whether it indexes `.md` files in your tenant has not been verified here. The
+  menu has a **File type: .md / .txt** switch; plain `.txt` is the safer bet if `.md` is not picked up. Check with your IT team which file types Copilot
+  indexes for you.
+
+**Rules it follows.** Newer wins: if a file and a note both changed, the newer one is kept and the other body goes into the note's History (open the History
+tab to restore it). **It never deletes anything**: deleting a note in Mnemo leaves its file, and renaming a note writes a new file and ignores the old one (delete
+the old one yourself). Only `.md`, `.markdown` and `.txt` files are read, files starting with `_` are skipped, files over 2 MB are skipped, and text from files
+is treated as untrusted: it only becomes note text, which Mnemo escapes when it renders. A plain file with no front matter is imported with its file name as the title.
+The first sync of a folder trusts the `updated` time inside each file, not the file's modification time, so a freshly downloaded OneDrive copy cannot overwrite newer local edits.
+
+**Data caution.** The demo notebook is mock data. If you put real notes in a synced folder they leave the browser's sandbox and follow your OneDrive's sharing and
+retention rules; treat them according to the company data-handling standard. Mnemo itself still makes no network requests.
+
+**Verified:** 17 unit tests for file names, the file format, parsing and the index (`node mnemo/tests/sync.test.mjs`); an end-to-end run in headless Edge against an
+origin-private folder (the same directory API the folder picker returns): first sync wrote all 36 notes plus the index; a second sync was a no-op; an outside edit and
+a new plain file were picked up with the old body kept in History; an in-app edit and a rename wrote the new file and left the old one; a touched stale duplicate was
+ignored; the `.txt` switch, Markdown import and disconnect worked; no console errors. **Not verified:** the real folder picker and permission prompts (a headless
+browser cannot drive them), a real OneDrive folder or its sync client, Copilot indexing, Firefox, Safari, two people editing at once, very large notebooks.
+
 ## Run it
 
 Double-click `index.html`. No install, no build, no network (zero external requests). Optionally `python -m http.server` in this folder.
@@ -100,7 +132,7 @@ Everything is fictional or generic and written for this demo: note prose, the so
 
 ## Limitations and ideas
 
-- Single device, single browser profile; there is no sync. `localStorage` is small (about 5 MB) and images are embedded, so keep them small.
+- Notes live in this browser profile unless you turn on folder sync (Chrome / Edge) or export. `localStorage` is small (about 5 MB) and images are embedded, so keep them small.
 - Scroll sync in Split is proportional, not block-aligned, so long images can drift.
 - No Markdown nesting of tables inside lists, no setext headings, no raw HTML (by design), and syntax highlighting covers only js / json / python / css.
 - Label propagation is randomised; the best-of-14 seeded approach is stable but not guaranteed optimal. A Louvain pass would be better.

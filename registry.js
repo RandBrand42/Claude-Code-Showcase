@@ -12,11 +12,11 @@ window.SHOWCASE_REGISTRY = {
     ],
     [
       "source files",
-      106
+      108
     ],
     [
       "lines of code",
-      25630
+      26052
     ],
     [
       "runtime dependencies",
@@ -129,7 +129,7 @@ window.SHOWCASE_REGISTRY = {
       "name": "Mnemo",
       "kind": "Productivity",
       "tagline": "A networked-thought notebook",
-      "description": "A markdown notebook with [[wikilinks]], backlinks, quick switcher and a force-directed knowledge graph that grows as you write.",
+      "description": "A markdown notebook with [[wikilinks]], backlinks, quick switcher, a force-directed knowledge graph and optional sync to a folder of Markdown files (OneDrive-ready).",
       "tech": [
         "Markdown",
         "Force graph",
@@ -141,8 +141,8 @@ window.SHOWCASE_REGISTRY = {
       "feature": false,
       "image": "assets/thumbs/mnemo.webp",
       "readme": true,
-      "files": 12,
-      "lines": 3548
+      "files": 14,
+      "lines": 3918
     },
     {
       "id": "prism",
@@ -162,7 +162,7 @@ window.SHOWCASE_REGISTRY = {
       "image": "assets/thumbs/prism.webp",
       "readme": true,
       "files": 7,
-      "lines": 1693
+      "lines": 1745
     },
     {
       "id": "infinitum",

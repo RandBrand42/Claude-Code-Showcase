@@ -67,6 +67,13 @@
           <button role="menuitem" data-act="json" class="mi"><span data-icon="download"></span>Export all as JSON</button>
           <button role="menuitem" data-act="zip" class="mi"><span data-icon="download"></span>Export Markdown bundle (.zip)</button>
           <button role="menuitem" data-act="import" class="mi"><span data-icon="upload"></span>Import JSON&hellip;</button>
+          <button role="menuitem" data-act="mdimport" class="mi"><span data-icon="upload"></span>Import Markdown files&hellip;</button>
+          <hr>
+          <div class="mi-note" id="sync-status" role="status">Folder sync: off</div>
+          <button role="menuitem" data-act="sync-connect" id="sync-connect" class="mi"><span data-icon="restore"></span><span>Sync to a folder (OneDrive)&hellip;</span></button>
+          <button role="menuitem" data-act="sync-now" id="sync-now" class="mi" hidden><span data-icon="restore"></span><span>Sync now</span></button>
+          <button role="menuitem" data-act="sync-ext" id="sync-ext" class="mi" hidden><span data-icon="file"></span><span>File type: <b id="sync-ext-val">.md</b></span></button>
+          <button role="menuitem" data-act="sync-off" id="sync-off" class="mi" hidden><span data-icon="restore"></span><span>Stop syncing</span></button>
           <hr>
           <button role="menuitemcheckbox" data-act="dropcap" id="menu-dropcap" class="mi" aria-checked="true"><span data-icon="book"></span>Drop cap in Read mode<i class="switch-mini"></i></button>
           <button role="menuitem" data-act="help" class="mi"><span data-icon="help"></span>Keyboard shortcuts</button>
@@ -181,11 +188,13 @@
 <div id="ed-pop" class="ed-pop" hidden></div>
 <div id="toasts" class="toasts" aria-live="polite"></div>
 <input type="file" id="file" accept="application/json,.json" hidden>
+<input type="file" id="mdfiles" accept=".md,.markdown,.txt,text/markdown,text/plain" multiple hidden>
 
 <script src="js/markdown.js"></script>
 <script src="js/core.js"></script>
 <script src="js/seed.js"></script>
 <script src="js/store.js"></script>
+<script src="js/sync.js"></script>
 <script src="js/graph.js"></script>
 <script src="js/editor.js"></script>
 <script src="js/ui.js"></script>

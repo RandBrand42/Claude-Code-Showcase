@@ -411,6 +411,22 @@
   function hideHelp() { els.help.classList.remove('show'); setTimeout(() => { els.help.hidden = true; }, 180); }
   const stamp = () => M.isoDate();
   function exportJSON() { S.flush(); M.download('mnemo-notes-' + stamp() + '.json', new Blob([S.exportJSON()], { type: 'application/json' })); M.toast('Exported ' + S.size() + ' notes as JSON'); }
+  /* ---------- folder sync menu ---------- */
+  function syncAct(a) {
+    const Y = M.sync;
+    if (a === 'sync-connect') { if (!Y.supported) return M.toast('Folder sync needs Chrome or Edge. In this browser, use Export Markdown bundle (.zip) and Import Markdown files.', { ms: 7000 }); if (Y.state === 'locked') Y.reconnect(); else Y.connect(); }
+    else if (a === 'sync-now') Y.syncNow(false);
+    else if (a === 'sync-ext') Y.setExt(Y.cfg.ext === '.md' ? '.txt' : '.md');
+    else if (a === 'sync-off') Y.disconnect();
+  }
+  function paintSync(Y) {
+    const s = $('#sync-status'), on = Y.state === 'ok' || Y.state === 'syncing' || Y.state === 'locked' || Y.state === 'error';
+    const label = { off: 'Folder sync: off', unsupported: 'Folder sync needs Chrome or Edge', locked: 'Folder sync paused: choose Reconnect to allow access to "' + Y.cfg.name + '"', syncing: 'Syncing with "' + Y.cfg.name + '"...', ok: 'Synced with "' + Y.cfg.name + '"' + (Y.cfg.last ? ' at ' + new Date(Y.cfg.last).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''), error: 'Folder sync error: ' + (Y.error || 'unknown') }[Y.state] || '';
+    s.textContent = label; s.className = 'mi-note ' + (Y.state === 'ok' ? 'ok' : Y.state === 'locked' || Y.state === 'error' ? 'warn' : '');
+    const c = $('#sync-connect'); c.hidden = Y.state === 'ok' || Y.state === 'syncing'; c.lastElementChild.textContent = Y.state === 'locked' ? 'Reconnect folder' : 'Sync to a folder (OneDrive)\u2026';
+    $('#sync-now').hidden = !(Y.state === 'ok' || Y.state === 'error'); $('#sync-ext').hidden = !on; $('#sync-off').hidden = !on; $('#sync-ext-val').textContent = Y.cfg.ext;
+    const note = document.querySelector('.sb-foot-note'); if (note) note.textContent = Y.state === 'ok' ? 'Synced to a folder' : 'Stored on this device';
+  }
   function exportZip() { M.download('mnemo-markdown-' + stamp() + '.zip', S.exportZip()); M.toast('Exported ' + S.size() + ' notes as a Markdown bundle'); }
   function toggleMenu(force) {
     const open = force != null ? force : els.menu.hidden;
@@ -584,7 +600,7 @@
       graphView: $('#graph-view'), gSearch: $('#g-search'), gDepth: $('#g-depth'), gPlay: $('#g-play'), gTl: $('#g-tl'), gTip: $('#g-tip')
     });
     M.hydrateIcons(document);
-    S.load(); applyTheme(); S.on(onStoreChange);
+    S.load(); applyTheme(); S.on(onStoreChange); M.sync = M.syncCore.init(M); M.sync.onChange(paintSync);
     E.init(); E.onChange = onEditorChange;
     E.onCursor = (l, c) => { els.statusR.textContent = 'Ln ' + l + ', Col ' + c; };
     mini = M.mini = new M.Graph($('#mini-graph'), { mini: true, onOpen: id => openNote(id) });
@@ -624,10 +640,11 @@
     els.help.addEventListener('click', e => { if (e.target.closest('[data-close]')) hideHelp(); });
     els.menu.addEventListener('click', e => {
       const b = e.target.closest('[data-act]'); if (!b) return; const a = b.dataset.act; toggleMenu(false);
-      if (a === 'json') exportJSON(); else if (a === 'zip') exportZip(); else if (a === 'import') els.file.click(); else if (a === 'help') showHelp();
+      if (a === 'json') exportJSON(); else if (a === 'zip') exportZip(); else if (a === 'import') els.file.click(); else if (a === 'mdimport') $('#mdfiles').click(); else if (a.indexOf('sync-') === 0) syncAct(a); else if (a === 'help') showHelp();
       else if (a === 'dropcap') { st.dropcap = !st.dropcap; els.read.classList.toggle('dropcap', st.dropcap); saveUi(); }
       else if (a === 'reset') cmds().find(c => /^Reset/.test(c.label)).run();
     });
+    $('#mdfiles').addEventListener('change', e => { const l = e.target.files; if (l && l.length) M.sync.importFiles(l); e.target.value = ''; });
     els.file.addEventListener('change', () => {
       const f = els.file.files[0]; if (!f) return;
       const r = new FileReader();

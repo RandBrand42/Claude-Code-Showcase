@@ -49,6 +49,8 @@ mark { background: var(--mark); color: inherit; border-radius: 3px; padding: 0 1
 .sbg-canvas { position: relative; height: 178px; } .sbg-canvas canvas { position: absolute; inset: 0; display: block; cursor: default; }
 .sbg-title { position: absolute; left: 12px; bottom: 8px; right: 12px; font: 600 11px/1.2 var(--sans); color: #8f9ac0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; }
 .sb-foot { position: relative; display: flex; align-items: center; gap: 2px; padding: 6px 10px 10px; border-top: 1px solid var(--line); }
+.mi-note { padding: 6px 12px 2px; font-size: 11px; color: var(--ink-3); line-height: 1.4; max-width: 260px; }
+.mi-note.ok { color: var(--ink-2); } .mi-note.warn { color: #e0a34a; }
 .sb-foot-note { margin-left: auto; font-size: 11px; color: var(--ink-3); padding-right: 6px; }
 .menu { position: absolute; left: 10px; bottom: 50px; width: 252px; padding: 6px; background: var(--raised); border: 1px solid var(--line-2); border-radius: 12px; box-shadow: var(--shadow-2); z-index: 30; animation: pop var(--d2) var(--ease); }
 .menu hr { border: 0; border-top: 1px solid var(--line); margin: 5px 4px; }
@@ -184,3 +186,4 @@ a.bl:hover, .bl.um:hover { background: var(--paper-3); }
   .read { padding: 6px 20px 120px !important; font-size: 17px !important; } .sb-graph { display: block; } .app[data-view="graph"] .bottomnav { background: rgba(9, 13, 30, .85); }
 }
 .gv-tl[hidden], .gv-tip[hidden], .ed-pop[hidden], .menu[hidden], .help[hidden], .palette[hidden], .hovercard[hidden] { display: none; }
+.mi[hidden] { display: none; }

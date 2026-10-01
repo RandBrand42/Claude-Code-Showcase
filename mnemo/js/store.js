@@ -195,6 +195,15 @@
     notes.delete(id); parsedCache.delete(id); persist(); S.emit('structure', id); return n;
   };
   S.reinsert = function (n) { notes.set(n.id, n); persist(); S.emit('structure', n.id); };
+  /** Apply an edit that came from outside the app (a changed file in the synced folder). The old body is kept in the note's history. */
+  S.applyExternal = function (id, p) {
+    const n = notes.get(id); if (!n) return false;
+    if (p.body != null && p.body !== n.body) { n.h.push({ t: Date.now(), b: n.body }); if (n.h.length > 20) n.h.shift(); n.body = p.body; }
+    if (p.title && p.title !== n.title) { const clash = S.byTitle(p.title); n.title = clash && clash.id !== id ? S.uniqueTitle(p.title) : p.title; }
+    if (p.pinned != null) n.pinned = !!p.pinned;
+    n.updated = p.updated || Date.now();
+    persist(); S.emit('structure', id); return true;
+  };
 
   function mapOutsideCode(body, fn) {
     let fence = false;
