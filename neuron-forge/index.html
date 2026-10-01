@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Neuron Forge - watch a neural network learn</title>
+<meta name="description" content="A from-scratch neural network laboratory. Real backpropagation, live decision boundaries, per-neuron heatmaps, challenges and a guided tour. No libraries, no network.">
+<meta name="theme-color" content="#070a12">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23070a12'/%3E%3Cpath d='M8 9l16 7-16 7' fill='none' stroke='%23ffb224' stroke-width='1.6'/%3E%3Ccircle cx='8' cy='9' r='3.2' fill='%2327d6f2'/%3E%3Ccircle cx='8' cy='23' r='3.2' fill='%2327d6f2'/%3E%3Ccircle cx='24' cy='16' r='4' fill='%23ffb224'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="i-play" viewBox="0 0 16 16"><path d="M4.5 2.5v11l9-5.5z" fill="currentColor"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 16 16"><rect x="3.5" y="2.5" width="3" height="11" rx=".6" fill="currentColor"/><rect x="9.5" y="2.5" width="3" height="11" rx=".6" fill="currentColor"/></symbol>
+    <symbol id="i-step" viewBox="0 0 16 16"><path d="M3 2.5v11l7-5.5z" fill="currentColor"/><rect x="11.3" y="2.5" width="2" height="11" rx=".6" fill="currentColor"/></symbol>
+    <symbol id="i-reset" viewBox="0 0 16 16"><path d="M3.2 8a4.8 4.8 0 1 0 1.6-3.6M3 2.6v3h3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-dice" viewBox="0 0 16 16"><rect x="2.2" y="2.2" width="11.6" height="11.6" rx="2.6" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="5.6" cy="5.6" r="1" fill="currentColor"/><circle cx="10.4" cy="10.4" r="1" fill="currentColor"/><circle cx="8" cy="8" r="1" fill="currentColor"/></symbol>
+    <symbol id="i-share" viewBox="0 0 16 16"><circle cx="12.3" cy="3.6" r="2" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="3.7" cy="8" r="2" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12.3" cy="12.4" r="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M5.5 7l5-2.4M5.5 9l5 2.4" stroke="currentColor" stroke-width="1.5" fill="none"/></symbol>
+    <symbol id="i-flask" viewBox="0 0 16 16"><path d="M6 2h4M6.6 2v4.4L3 12.6A1.2 1.2 0 0 0 4 14.4h8a1.2 1.2 0 0 0 1-1.8L9.4 6.4V2M4.6 10.4h6.8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-compass" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.6 5.4L9 9 5.4 10.6 7 7z" fill="currentColor"/></symbol>
+    <symbol id="i-camera" viewBox="0 0 16 16"><path d="M2 5.2h2.6L5.8 3.4h4.4l1.2 1.8H14v7.4H2z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="8" cy="8.8" r="2.1" fill="none" stroke="currentColor" stroke-width="1.5"/></symbol>
+    <symbol id="i-keys" viewBox="0 0 16 16"><rect x="1.8" y="4" width="12.4" height="8" rx="1.8" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M4.6 7h.01M7 7h.01M9.4 7h.01M11.6 7h.01M5 9.6h6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 16 16"><path d="M13 8a5 5 0 1 1-1.6-3.7M13 2.4v3h-3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  </defs>
+</svg>
+<noscript>Neuron Forge needs JavaScript: every neuron here is computed live in your browser.</noscript>
+
+<div class="app" id="app">
+  <header class="topbar">
+    <div class="brand">
+      <svg viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="16" fill="none" stroke="rgba(150,180,255,.3)"/><path d="M8 10l18 7-18 7" fill="none" stroke="#ffb224" stroke-width="1.4" opacity=".8"/><circle cx="8" cy="10" r="3.4" fill="#27d6f2"/><circle cx="8" cy="24" r="3.4" fill="#27d6f2"/><circle cx="26" cy="17" r="4.4" fill="#ffb224"/></svg>
+      <div><h1>Neuron<b>Forge</b></h1><span class="mono-label">neural network observatory</span></div>
+    </div>
+    <div class="transport" role="group" aria-label="Training controls">
+      <button class="btn btn--primary" id="btn-play" aria-label="Play training (Space)"><svg><use href="#i-play"/></svg><span>Play</span></button>
+      <button class="btn" id="btn-step" title="Train one epoch (S)"><svg><use href="#i-step"/></svg><span class="lbl-long">Step</span></button>
+      <button class="btn" id="btn-reset" title="Re-initialise weights, keep data (R)"><svg><use href="#i-reset"/></svg><span class="lbl-long">Reset</span></button>
+      <button class="btn" id="btn-seed" title="Roll a new seed: new data and weights (N)"><svg><use href="#i-dice"/></svg><span class="lbl-long">New seed</span></button>
+    </div>
+    <div class="readouts">
+      <div class="readout"><span class="mono-label">Epoch</span><b class="big" id="epoch">0</b></div>
+      <label class="readout"><span class="mono-label">Seed</span><input id="seed" type="text" inputmode="numeric" maxlength="9" spellcheck="false" aria-label="Random seed"></label>
+      <div class="readout" id="speed-wrap"><span class="mono-label">Speed <button class="help" data-help="speed" aria-label="Help: speed">?</button></span><div id="speed"></div></div>
+    </div>
+    <div class="top-actions">
+      <button class="btn" id="btn-recipes"><svg><use href="#i-flask"/></svg><span>Recipes</span></button>
+      <button class="btn" id="btn-share"><svg><use href="#i-share"/></svg><span>Share</span></button>
+      <button class="btn btn--ghost" id="btn-tour"><svg><use href="#i-compass"/></svg><span>Tour</span></button>
+      <button class="btn btn--ghost btn--icon" id="btn-keys" aria-label="Keyboard shortcuts (?)" title="Keyboard shortcuts (?)"><svg><use href="#i-keys"/></svg></button>
+    </div>
+  </header>
+
+  <main class="main">
+    <!-- LEFT: data, features, training -->
+    <aside class="col col--left" aria-label="Data and settings">
+      <section class="panel" id="panel-data">
+        <div class="panel__head"><span class="panel__idx">01</span><h2 class="panel__title">Data</h2><span class="panel__sub"><button class="help" data-help="dataset" aria-label="Help: data">?</button></span></div>
+        <div class="dsets" id="dsets" role="radiogroup" aria-label="Dataset"></div>
+        <div class="dset-name stack" id="dset-name"></div>
+        <div id="data-ctl"></div>
+      </section>
+      <section class="panel" id="panel-features">
+        <div class="panel__head"><span class="panel__idx">02</span><h2 class="panel__title">Inputs</h2><span class="panel__sub"><button class="help" data-help="features" aria-label="Help: input features">?</button></span></div>
+        <div class="feats" id="feats" role="group" aria-label="Input features"></div>
+      </section>
+      <section class="panel" id="panel-train">
+        <div class="panel__head"><span class="panel__idx">03</span><h2 class="panel__title">Training</h2></div>
+        <div id="train-ctl"></div>
+      </section>
+    </aside>
+
+    <!-- CENTER: decision boundary + network -->
+    <section class="col col--center" aria-label="Visualisation">
+      <div class="panel boundary panel--fill" id="panel-boundary">
+        <div class="panel__head"><span class="panel__idx">04</span><h2 class="panel__title">Decision boundary</h2><span class="panel__sub"><span class="mono-label" id="arch-label"></span><button class="help" data-help="boundary" aria-label="Help: decision boundary">?</button></span></div>
+        <div class="plot" id="plot"><canvas id="cv-boundary" aria-label="Decision boundary heatmap with data points. Hover to probe the prediction."></canvas></div>
+        <div class="probe">
+          <div class="probe__read" id="probe" aria-live="off"></div>
+          <div class="legend" aria-label="Legend">
+            <div><span class="sw sw--pos"></span>class +1 (amber)</div>
+            <div><span class="sw sw--neg"></span>class &minus;1 (cyan)</div>
+            <div><span class="sw sw--train"></span>training point &nbsp;<span class="sw sw--test"></span>test point</div>
+            <div><span class="sw sw--line"></span>decision boundary (p = 0.5)</div>
+            <div><span class="sw sw--err"></span>white core = misclassified</div>
+          </div>
+          <div class="stats" id="stats"></div>
+          <div class="probe__btns">
+            <button class="btn btn--sm" id="btn-snap"><svg><use href="#i-camera"/></svg>PNG snapshot</button>
+            <button class="btn btn--sm btn--ghost" id="btn-regen"><svg><use href="#i-refresh"/></svg>New data</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel netpanel" id="panel-net">
+        <div class="panel__head"><span class="panel__idx">05</span><h2 class="panel__title">Network</h2><span class="panel__sub"><span class="mono-label" id="param-label"></span><div class="net-tools"><span class="mono-label">layers</span><div class="pill" role="group" aria-label="Hidden layers"><button id="layer-minus" aria-label="Remove last hidden layer" title="Remove a hidden layer">&minus;</button><output id="layer-count" title="hidden layers">0</output><button id="layer-plus" aria-label="Add a hidden layer" title="Add a hidden layer">+</button></div></div><button class="help" data-help="network" aria-label="Help: network diagram">?</button></span></div>
+        <div class="netview" id="netview">
+          <canvas class="edges" id="cv-edges"></canvas>
+          <div class="nodes" id="nodes"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT: metrics, inspector, notebook -->
+    <aside class="col col--right" aria-label="Metrics and learning">
+      <section class="panel" id="panel-loss">
+        <div class="panel__head"><span class="panel__idx">06</span><h2 class="panel__title">Loss</h2><span class="panel__sub"><div class="seg seg--tight" id="loss-scale" style="width:92px"></div><button class="help" data-help="losschart" aria-label="Help: loss curves">?</button></span></div>
+        <div class="legend-inline"><span><i style="background:var(--train)"></i>train <b class="num" id="lv-train" style="color:var(--train)">-</b></span><span><i style="background:var(--test)"></i>test <b class="num" id="lv-test" style="color:var(--test)">-</b></span></div>
+        <div class="chart-wrap"><canvas id="cv-loss" aria-label="Train and test loss per epoch"></canvas></div>
+        <div class="gauges">
+          <div class="gauge" id="g-train"></div>
+          <div class="gauge" id="g-test"></div>
+        </div>
+      </section>
+      <section class="panel" id="panel-inspect">
+        <div class="panel__head"><span class="panel__idx">07</span><h2 class="panel__title">Inspector</h2></div>
+        <div class="twocol">
+          <div><div class="subhead"><span class="mono-label" id="act-title">Activation</span><button class="help" data-help="actplot" aria-label="Help: activation plot">?</button></div><canvas class="cv-act" id="cv-act"></canvas></div>
+          <div><div class="subhead"><span class="mono-label">Weights per layer</span><button class="help" data-help="hist" aria-label="Help: weight histogram">?</button></div><canvas class="cv-hist" id="cv-hist"></canvas></div>
+        </div>
+      </section>
+      <section class="panel" id="panel-notebook">
+        <div class="tabs" role="tablist" aria-label="Lab notebook">
+          <button class="tab" role="tab" id="tab-challenges" aria-selected="true" aria-controls="tp-challenges">Challenges</button>
+          <button class="tab" role="tab" id="tab-learn" aria-selected="false" aria-controls="tp-learn">Learn</button>
+        </div>
+        <div class="tabpanel" role="tabpanel" id="tp-challenges" aria-labelledby="tab-challenges"></div>
+        <div class="tabpanel learn" role="tabpanel" id="tp-learn" aria-labelledby="tab-learn" hidden></div>
+      </section>
+    </aside>
+  </main>
+</div>
+
+<div id="tooltip" role="tooltip" hidden></div>
+<div id="toasts" aria-live="polite"></div>
+<canvas id="confetti" aria-hidden="true"></canvas>
+<div id="tour" hidden role="dialog" aria-modal="true" aria-label="Guided tour"><div class="tour__spot"></div><div class="tour__card"></div></div>
+<div class="modal" id="modal-keys" hidden role="dialog" aria-modal="true" aria-label="Keyboard shortcuts"><div class="modal__card"></div></div>
+
+<script src="js/engine.js"></script>
+<script src="js/data.js"></script>
+<script src="js/lab.js"></script>
+<script src="js/kit.js"></script>
+<script src="js/content.js"></script>
+<script src="js/boundary.js"></script>
+<script src="js/netview.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/challenges.js"></script>
+<script src="js/tour.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

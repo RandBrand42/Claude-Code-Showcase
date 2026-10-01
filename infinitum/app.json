@@ -1,0 +1,10 @@
+{
+  "name": "Infinitum",
+  "kind": "Creative",
+  "hue": 240,
+  "order": 80,
+  "feature": false,
+  "tagline": "A deep-zoom fractal explorer",
+  "description": "Fly into the Mandelbrot and Julia sets on the GPU with smooth colouring, orbit traps, curated palettes and cinematic auto-tours.",
+  "tech": ["WebGL2", "Fractals", "Palettes", "Auto-tour"]
+}

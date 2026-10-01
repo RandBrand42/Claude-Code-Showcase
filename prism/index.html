@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Prism - bend light, wake every crystal</title>
+<meta name="description" content="An optics puzzle game. Rotate mirrors, split beams, mix colours and wake every crystal. Works offline.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2308080c'/%3E%3Cpath d='M16 6 26 24H6z' fill='none' stroke='%23c04bff' stroke-width='2.4' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<canvas id="bgc" aria-hidden="true"></canvas>
+<main id="app">
+
+  <section id="title" class="screen on" aria-label="Title">
+    <div class="title-copy">
+      <p class="eyebrow">An optics puzzle</p>
+      <h1>Prism</h1>
+      <p class="tag">Bend light. Wake every crystal.</p>
+      <nav class="menu" aria-label="Main menu">
+        <button data-go="map"><b>Play</b><span id="mPlay">24 levels</span></button>
+        <button data-go="daily"><b>Daily</b><span id="mDaily"></span></button>
+        <button data-go="endless"><b>Endless</b><span>Generated, forever</span></button>
+        <button data-go="sandbox"><b>Sandbox</b><span>Build and share</span></button>
+      </nav>
+      <p class="foot">Click or tap to turn. Drag pieces from the tray. Arrow keys and Space work too. <kbd>?</kbd> for help.</p>
+    </div>
+    <button class="icon snd" data-act="mute" aria-label="Toggle sound"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9z"/><path class="w" d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/></svg></button>
+  </section>
+
+  <section id="map" class="screen" aria-label="Level select">
+    <header class="top"><button class="ghost" data-go="title">Back</button><h2>Constellations</h2><span class="stars" id="starTotal"></span></header>
+    <div id="mapsvg"></div>
+  </section>
+
+  <section id="game" class="screen" aria-label="Game">
+    <header class="top">
+      <button class="ghost" data-act="back">Menu</button>
+      <div class="ttl"><span id="gChap"></span><h2 id="gName"></h2></div>
+      <div class="count"><span id="gMoves">0</span><em id="gPar"></em></div>
+      <button class="ghost" data-act="pause">Pause</button>
+    </header>
+    <div id="stage"><canvas id="board" tabindex="0" aria-label="Puzzle board. Arrow keys move the cursor, Space rotates or places."></canvas><p id="tip"></p></div>
+    <div id="tray" aria-label="Piece tray"></div>
+    <nav class="bar">
+      <button data-act="undo">Undo</button><button data-act="redo">Redo</button><button data-act="reset">Reset</button><button data-act="hint" class="accent">Hint</button>
+      <span class="sbx"><button data-act="export">Export</button><button data-act="import">Import</button><button data-act="clear">Clear</button></span>
+    </nav>
+  </section>
+</main>
+
+<div id="win" class="overlay" role="dialog" aria-label="Level complete"><div class="card">
+  <p class="eyebrow" id="wKicker">Level complete</p><h2 id="wName"></h2>
+  <div class="starrow" id="wStars"></div><p class="sub" id="wSub"></p>
+  <div class="row"><button data-act="next" class="accent" id="wNext">Next</button><button data-act="replay">Replay</button><button data-go="map">Map</button></div>
+</div></div>
+
+<div id="pause" class="overlay" role="dialog" aria-label="Paused"><div class="card">
+  <p class="eyebrow">Paused</p><h2>Take a breath</h2>
+  <div class="col"><button data-act="resume" class="accent">Resume</button><button data-act="reset">Restart level</button><button data-go="map">Level map</button><button data-act="mute">Sound: <span id="sndState">on</span></button><button data-act="help">Controls</button></div>
+</div></div>
+
+<div id="help" class="overlay" role="dialog" aria-label="Controls"><div class="card wide">
+  <p class="eyebrow">Controls</p><h2>How to play</h2>
+  <table>
+    <tr><td>Click / tap a piece</td><td>Rotate 90 degrees</td></tr>
+    <tr><td>Right-click, <kbd>Q</kbd></td><td>Rotate back</td></tr>
+    <tr><td>Drag from tray, or tap then tap a cell</td><td>Place a piece; drag it off the board to return it</td></tr>
+    <tr><td>Arrow keys, <kbd>Space</kbd> / <kbd>Enter</kbd></td><td>Move cursor, rotate or place the selected tray piece</td></tr>
+    <tr><td><kbd>1</kbd>-<kbd>9</kbd>, <kbd>Del</kbd></td><td>Select a tray piece, send a placed piece back</td></tr>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>Z</kbd> / <kbd>Y</kbd></td><td>Undo / redo</td></tr>
+    <tr><td><kbd>H</kbd> <kbd>R</kbd> <kbd>M</kbd> <kbd>Esc</kbd></td><td>Hint, reset, mute, pause</td></tr>
+  </table>
+  <div class="row"><button data-act="closehelp" class="accent">Got it</button></div>
+</div></div>
+
+<div id="dlg" class="overlay" role="dialog" aria-label="Share code"><div class="card wide">
+  <p class="eyebrow" id="dKicker">Share code</p><h2 id="dTitle"></h2>
+  <textarea id="dText" spellcheck="false" rows="4" aria-label="Level share code"></textarea>
+  <p class="sub" id="dMsg"></p>
+  <div class="row"><button data-act="dgo" class="accent" id="dGo">Copy</button><button data-act="dclose">Close</button></div>
+</div></div>
+
+<div id="sweep" aria-hidden="true"></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script src="js/core.js"></script>
+<script src="js/levels.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

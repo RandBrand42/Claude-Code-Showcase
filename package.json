@@ -1,0 +1,15 @@
+{
+  "name": "claude-code-showcase",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A suite of dependency-free interactive showcase apps, served as static files.",
+  "scripts": {
+    "build": "node tools/build-registry.mjs",
+    "registry": "node tools/build-registry.mjs",
+    "thumbs": "node tools/browse.mjs index.html --script=tools/make-thumbs.scenario.mjs --out=_scratch/thumbs-run.png --wait=1500",
+    "serve": "node tools/serve.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

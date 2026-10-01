@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230d1119'/%3E%3Cpath d='M9 22V10l7 8 7-8v12' fill='none' stroke='%23f0c674' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<title>Mnemo - a notebook with a living graph</title>
+<meta name="description" content="Mnemo is a local-first networked-thought notebook: from-scratch Markdown, wikilinks, backlinks and a force-directed knowledge graph.">
+<meta name="color-scheme" content="light dark">
+<script>
+(function () {
+  var dark = matchMedia('(prefers-color-scheme: dark)').matches, t = dark ? 'dark' : 'light';
+  try { var s = JSON.parse(localStorage.getItem('mnemo.v1.ui') || '{}'); if (s.theme) t = s.theme; } catch (e) { /* storage blocked */ }
+  document.documentElement.dataset.theme = t;
+})();
+</script>
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/content.css">
+</head>
+<body>
+<a class="skip" href="#ed-ta">Skip to the editor</a>
+
+<div id="app" class="app" data-view="notes">
+
+  <aside id="sidebar" class="sidebar" aria-label="Notes">
+    <div class="sb-inner">
+      <div class="sb-top">
+        <div class="brand">
+          <svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" class="logo-bg"/><path d="M8.5 22.5v-11l7.5 7.5 7.5-7.5v11" class="logo-line"/><circle cx="8.5" cy="11.5" r="2.3"/><circle cx="16" cy="19" r="2.3"/><circle cx="23.5" cy="11.5" r="2.3"/></svg>
+          <span class="wordmark">Mnemo</span>
+        </div>
+        <div class="sb-actions">
+          <button class="icon-btn" id="btn-new" data-icon="plus" title="New note (Alt+N)" aria-label="New note"></button>
+          <button class="icon-btn" id="btn-daily" data-icon="calendar" title="Today's note (Ctrl+D)" aria-label="Open today's daily note"></button>
+          <button class="icon-btn" id="btn-graph" data-icon="graph" title="Graph view (Ctrl+G)" aria-label="Open graph view"></button>
+        </div>
+      </div>
+      <label class="sb-search">
+        <span data-icon="search"></span>
+        <input id="search" type="search" placeholder="Search notes" autocomplete="off" spellcheck="false" aria-label="Search all notes">
+        <kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>F</kbd>
+      </label>
+      <div class="sb-scroll" id="sb-scroll">
+        <div id="search-results" hidden></div>
+        <div id="sb-lists">
+          <section id="sec-pinned" hidden><h3 class="label">Pinned</h3><ul id="list-pinned" class="nlist"></ul></section>
+          <section><h3 class="label">Recent</h3><ul id="list-recent" class="nlist"></ul></section>
+          <section><h3 class="label">Tags</h3><div id="tag-cloud" class="tagcloud"></div></section>
+          <section><h3 class="label">All notes <span id="count-all" class="count"></span></h3><ul id="list-all" class="nlist"></ul></section>
+        </div>
+      </div>
+      <div class="sb-graph">
+        <div class="sbg-head">
+          <span class="label">Neighbourhood</span>
+          <div class="seg sm dark" id="depth-seg" role="group" aria-label="Graph depth"><button data-v="1" aria-pressed="true">1</button><button data-v="2">2</button><button data-v="3">3</button></div>
+          <button class="icon-btn sm" id="btn-expand" data-icon="fit" title="Open the full graph" aria-label="Open the full graph"></button>
+        </div>
+        <div class="sbg-canvas"><canvas id="mini-graph" role="img" aria-label="Local graph of the notes linked to this one"></canvas><div class="sbg-title" id="mini-title"></div></div>
+      </div>
+      <div class="sb-foot">
+        <button class="icon-btn" id="btn-theme" title="Toggle theme (Ctrl+Shift+L)" aria-label="Toggle theme"></button>
+        <button class="icon-btn" id="btn-menu" data-icon="more" title="Export, import and settings" aria-label="Menu" aria-haspopup="menu" aria-expanded="false"></button>
+        <button class="icon-btn" id="btn-help" data-icon="help" title="Keyboard shortcuts (?)" aria-label="Keyboard shortcuts"></button>
+        <span class="sb-foot-note">Stored on this device</span>
+        <div id="menu" class="menu" role="menu" hidden>
+          <button role="menuitem" data-act="json" class="mi"><span data-icon="download"></span>Export all as JSON</button>
+          <button role="menuitem" data-act="zip" class="mi"><span data-icon="download"></span>Export Markdown bundle (.zip)</button>
+          <button role="menuitem" data-act="import" class="mi"><span data-icon="upload"></span>Import JSON&hellip;</button>
+          <hr>
+          <button role="menuitemcheckbox" data-act="dropcap" id="menu-dropcap" class="mi" aria-checked="true"><span data-icon="book"></span>Drop cap in Read mode<i class="switch-mini"></i></button>
+          <button role="menuitem" data-act="help" class="mi"><span data-icon="help"></span>Keyboard shortcuts</button>
+          <button role="menuitem" data-act="reset" class="mi danger"><span data-icon="restore"></span>Reset demo notebook&hellip;</button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <main id="main" class="main">
+    <header class="topbar">
+      <div class="tb-left">
+        <button id="btn-sb" class="icon-btn" data-icon="panel-left" title="Sidebar (Ctrl+\)" aria-label="Toggle sidebar" aria-expanded="true"></button>
+        <button id="btn-back" class="icon-btn" data-icon="back" title="Back (Alt+Left)" aria-label="Back" disabled></button>
+        <button id="btn-fwd" class="icon-btn" data-icon="fwd" title="Forward (Alt+Right)" aria-label="Forward" disabled></button>
+      </div>
+      <div class="seg" id="mode-seg" role="group" aria-label="View mode (Ctrl+E)">
+        <button data-mode="edit" aria-pressed="false">Edit</button><button data-mode="split" aria-pressed="true">Split</button><button data-mode="read" aria-pressed="false">Read</button>
+      </div>
+      <div class="tb-right">
+        <span id="save-ind" class="save-ind" role="status" aria-live="polite"><i class="dot"></i>Saved</span>
+        <button id="btn-pin" class="icon-btn" data-icon="pin" title="Pin note" aria-label="Pin note" aria-pressed="false"></button>
+        <button id="btn-focus" class="icon-btn" data-icon="focus" title="Focus mode (Ctrl+.)" aria-label="Focus mode"></button>
+        <button id="btn-cx" class="icon-btn" data-icon="panel-right" title="Context panel (Alt+\)" aria-label="Toggle context panel" aria-expanded="true"></button>
+      </div>
+      <div class="progress" aria-hidden="true"><i id="read-progress"></i></div>
+    </header>
+
+    <section id="note-view" class="note-view" data-mode="split" aria-label="Note">
+      <div class="note-head">
+        <input id="title" class="title-input" type="text" spellcheck="false" autocomplete="off" aria-label="Note title (rename updates links)">
+        <div class="note-sub"><span id="note-meta"></span><span id="note-tags" class="note-tags"></span></div>
+      </div>
+      <div id="panes" class="panes">
+        <div id="pane-edit" class="pane pane-edit">
+          <div id="ed-scroll" class="ed-scroll">
+            <div class="ed-inner">
+              <pre id="ed-hl" class="ed-hl" aria-hidden="true"></pre>
+              <textarea id="ed-ta" class="ed-ta" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Note source in Markdown"></textarea>
+            </div>
+          </div>
+        </div>
+        <div id="pane-read" class="pane pane-read">
+          <div id="read-scroll" class="read-scroll"><article id="read-body" class="read" aria-label="Rendered note"></article></div>
+        </div>
+      </div>
+      <footer class="statusbar"><span id="status-left"></span><span id="status-right"></span></footer>
+    </section>
+
+    <section id="graph-view" class="graph-view" aria-label="Graph view">
+      <div class="gv-canvas"><canvas id="big-graph" role="img" aria-label="Knowledge graph of every note"></canvas></div>
+      <div class="gv-top">
+        <button class="gbtn" id="g-back" data-icon="arrow-l">Notes</button>
+        <div class="gv-title"><h2>Graph</h2><span id="g-stats"></span></div>
+        <label class="g-search"><span data-icon="search"></span><input id="g-search" type="search" placeholder="Find a note in the sky" autocomplete="off" aria-label="Highlight notes in the graph"></label>
+        <div class="gv-actions">
+          <button class="gbtn" id="g-play" aria-pressed="false" data-icon="play"><span>Time-lapse</span></button>
+          <button class="gbtn" id="g-shake" data-icon="burst" title="Re-heat the simulation"><span>Shake</span></button>
+          <button class="gbtn" id="g-fit" data-icon="fit" title="Fit to screen"><span>Fit</span></button>
+        </div>
+      </div>
+      <div class="gv-panel" id="g-panel">
+        <button id="g-panel-toggle" class="gp-head" aria-expanded="true"><span class="label">Filters</span><span data-icon="chev-d"></span></button>
+        <div class="gp-body">
+          <div class="gp-row"><span class="label">Depth from this note</span><div class="seg sm dark" id="g-depth" role="group"><button data-v="0">All</button><button data-v="1">1</button><button data-v="2">2</button><button data-v="3">3</button></div></div>
+          <div class="gp-row"><span class="label">Colour by</span><div class="seg sm dark" id="g-color" role="group"><button data-v="cluster">Cluster</button><button data-v="tag">Tag</button></div></div>
+          <div class="gp-row"><span class="label">Tags</span><div id="g-tags" class="tagcloud dark"></div></div>
+          <div class="gp-row sw"><span>Show orphans</span><button role="switch" id="g-orphans" class="switch" aria-checked="true" aria-label="Show orphans"></button></div>
+          <div class="gp-row sw"><span>Labels</span><button role="switch" id="g-labels" class="switch" aria-checked="true" aria-label="Show labels"></button></div>
+        </div>
+      </div>
+      <ul id="g-legend" class="gv-legend" aria-label="Legend"></ul>
+      <div id="g-tl" class="gv-tl" hidden></div>
+      <div id="g-tip" class="gv-tip" hidden></div>
+      <p class="gv-hint">Drag to pan &middot; scroll to zoom &middot; pull a node &middot; click to open</p>
+    </section>
+  </main>
+
+  <aside id="context" class="context" aria-label="Note context">
+    <div class="cx-inner">
+      <div id="cx-tabs" class="cx-tabs" role="tablist">
+        <button role="tab" data-tab="links" aria-selected="true">Links <span id="badge-links" class="badge"></span></button>
+        <button role="tab" data-tab="outline" aria-selected="false">Outline</button>
+        <button role="tab" data-tab="history" aria-selected="false">History <span id="badge-hist" class="badge"></span></button>
+      </div>
+      <div class="cx-scroll">
+        <div class="cx-page" data-page="links" id="cx-links"></div>
+        <div class="cx-page" data-page="outline" id="cx-outline" hidden></div>
+        <div class="cx-page" data-page="history" id="cx-history" hidden></div>
+      </div>
+    </div>
+  </aside>
+
+  <nav id="bottomnav" class="bottomnav" aria-label="Sections">
+    <button data-tab="notes" data-icon="file"><span>Notes</span></button>
+    <button data-tab="write" data-icon="edit"><span>Write</span></button>
+    <button data-tab="links" data-icon="link"><span>Links</span></button>
+    <button data-tab="graph" data-icon="graph"><span>Graph</span></button>
+  </nav>
+  <div id="scrim" class="scrim"></div>
+</div>
+
+<div id="palette" class="palette" hidden>
+  <div class="pal" role="dialog" aria-modal="true" aria-label="Quick switcher and command palette">
+    <div class="pal-in"><span data-icon="search"></span><input id="pal-input" type="text" placeholder="Jump to a note - or type > for commands" autocomplete="off" spellcheck="false" aria-label="Search notes and commands"></div>
+    <ul id="pal-list" role="listbox"></ul>
+    <div id="pal-foot" class="pal-foot"></div>
+  </div>
+</div>
+<div id="help" class="help" hidden></div>
+<div id="hovercard" class="hovercard" hidden></div>
+<div id="ed-pop" class="ed-pop" hidden></div>
+<div id="toasts" class="toasts" aria-live="polite"></div>
+<input type="file" id="file" accept="application/json,.json" hidden>
+
+<script src="js/markdown.js"></script>
+<script src="js/core.js"></script>
+<script src="js/seed.js"></script>
+<script src="js/store.js"></script>
+<script src="js/graph.js"></script>
+<script src="js/editor.js"></script>
+<script src="js/ui.js"></script>
+<script>Mnemo.ui.init();</script>
+</body>
+</html>

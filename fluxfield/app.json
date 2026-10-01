@@ -1,0 +1,10 @@
+{
+  "name": "Fluxfield",
+  "kind": "Creative",
+  "hue": 204,
+  "order": 10,
+  "feature": true,
+  "tagline": "A real-time GPU fluid & light instrument",
+  "description": "A full-screen WebGL2 Navier-Stokes simulation with bloom, kaleidoscope symmetry, vortex wells and a hands-free conductor that paints liquid light on its own.",
+  "tech": ["WebGL2", "GLSL", "Navier-Stokes", "MediaRecorder"]
+}

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050407">
+<title>INFINITUM - a museum of mathematics</title>
+<meta name="description" content="A GPU deep-zoom fractal explorer: Mandelbrot, Julia, Burning Ship, Tricorn, Multibrot and Newton, rendered live with double-single precision.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23050407'/%3E%3Cpath d='M16 16c-2-4-7-5-9-2s0 7 4 6 5-4 5-4 1 3 5 4 6-3 4-6-7-2-9 2z' fill='none' stroke='%23d8b36a' stroke-width='1.8'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+  <canvas id="gl" tabindex="0" aria-label="Fractal view. Drag to pan, scroll or pinch to zoom, double-click to zoom in."></canvas>
+  <div id="frame" aria-hidden="true"></div>
+
+  <header id="brand" class="chrome">
+    <span class="wordmark">INFINITUM</span>
+    <span class="brand-fam" id="famName"></span>
+  </header>
+
+  <div id="history" class="chrome" role="group" aria-label="View history">
+    <button class="ibtn sm" id="btnUndo" title="Undo view (Alt+Left)" aria-label="Undo view"></button>
+    <button class="ibtn sm" id="btnRedo" title="Redo view (Alt+Right)" aria-label="Redo view"></button>
+    <button class="ibtn sm" id="btnHome" title="Reset view (Home)" aria-label="Reset view"></button>
+  </div>
+
+  <aside id="label" class="chrome" aria-live="polite">
+    <div class="plate" id="lblPlate"></div>
+    <h2 id="lblTitle"></h2>
+    <p id="lblCaption"></p>
+    <div class="coords" id="coords" title="Click to copy coordinates"></div>
+  </aside>
+
+  <div id="julia" class="chrome" hidden>
+    <div class="ring"><button id="juliaBtn" aria-label="Lock Julia companion parameter"></button></div>
+    <div class="cap"><span id="juliaCap"></span></div>
+  </div>
+
+  <div id="depth" class="chrome" aria-hidden="true">
+    <div class="track"><div class="limit" id="depthLimit"></div><div class="ticks" id="depthTicks"></div><div class="marker" id="depthMarker"><span id="depthVal"></span></div></div>
+  </div>
+
+  <nav id="dock" class="chrome" aria-label="Controls"></nav>
+  <div id="pop" role="dialog" hidden></div>
+
+  <div id="refine" hidden><i></i><span></span></div>
+  <div id="warn" hidden></div>
+  <div id="toast" role="status"></div>
+  <div id="info" hidden></div>
+  <div id="help" hidden></div>
+
+  <div id="intro">
+    <div class="intro-card"><h1>INFINITUM</h1><p>a museum of mathematics</p></div>
+  </div>
+  <div id="noGL" hidden><div><h1>INFINITUM</h1><p id="noGLmsg"></p></div></div>
+</div>
+<script src="js/shaders.js"></script>
+<script src="js/core.js"></script>
+<script src="js/renderer.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

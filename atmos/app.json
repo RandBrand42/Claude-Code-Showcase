@@ -1,0 +1,10 @@
+{
+  "name": "Atmos",
+  "kind": "Lifestyle",
+  "hue": 215,
+  "order": 90,
+  "feature": false,
+  "tagline": "Weather you can feel",
+  "description": "A procedural living sky with rain, snow, lightning and a moving sun and moon, plus a 48-hour time scrubber that morphs the whole scene as you drag.",
+  "tech": ["Procedural sky", "Particles", "Time scrubber", "Glass UI"]
+}

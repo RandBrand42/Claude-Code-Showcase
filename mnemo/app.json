@@ -1,0 +1,10 @@
+{
+  "name": "Mnemo",
+  "kind": "Productivity",
+  "hue": 160,
+  "order": 60,
+  "feature": false,
+  "tagline": "A networked-thought notebook",
+  "description": "A markdown notebook with [[wikilinks]], backlinks, quick switcher and a force-directed knowledge graph that grows as you write.",
+  "tech": ["Markdown", "Force graph", "Backlinks", "Local-first"]
+}

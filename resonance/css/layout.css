@@ -1,0 +1,104 @@
+/* RESONANCE - layout.css
+ * Desktop: one long hardware-style panel (12-column grid).
+ * Tablet (<= 1100px): sections become tabs.  Phone (<= 700px): compact single-column stack with a jump bar.
+ */
+.top {
+  display: grid;
+  grid-template-columns: 250px minmax(0, 1fr) auto;
+  gap: 20px;
+  align-items: center;
+  padding-bottom: 18px;
+}
+.lcd-block { display: grid; gap: 9px; min-width: 0; }
+.patchbtns { display: flex; flex-wrap: wrap; gap: 6px; }
+.transport { display: flex; align-items: center; justify-content: flex-end; gap: 10px; flex-wrap: wrap; }
+.tempo { display: flex; align-items: center; gap: 4px; padding: 6px 10px 6px 4px; border-radius: 12px; background: linear-gradient(180deg, #121417, #181a1e); box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.8), 0 1px 0 rgba(255, 255, 255, 0.05); }
+
+.panel {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--gap);
+  align-items: stretch;
+}
+.pane { display: contents; }
+.bay {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr) minmax(0, 1.2fr) 214px;
+  gap: var(--gap);
+  height: 196px;
+}
+.c2 { grid-column: span 2; }
+.c3 { grid-column: span 3; }
+.c4 { grid-column: span 4; }
+.c8 { grid-column: span 8; }
+.c12 { grid-column: 1 / -1; }
+.mod.seq, .mod.play { padding-bottom: 14px; }
+
+
+/* ===== tablet: tabs ===== */
+@media (max-width: 1100px) {
+  .chassis { padding: 18px 16px 12px; }
+  .top { grid-template-columns: minmax(0, 1fr) auto; }
+  .brand { grid-column: 1 / -1; }
+  .tabs { display: flex; }
+  .panel { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .bay { grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) 200px; height: 190px; }
+  .bay .gram { display: none; }
+  .pane { display: none; }
+  .pane.active { display: grid; grid-column: 1 / -1; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: var(--gap); animation: paneIn 300ms var(--ease); }
+  .c2, .c3 { grid-column: span 3; }
+  .c4 { grid-column: span 3; }
+  .c8, .c12 { grid-column: 1 / -1; }
+  @keyframes paneIn { from { opacity: 0; transform: translateY(8px); } }
+}
+
+/* ===== phone: compact stack ===== */
+@media (max-width: 700px) {
+  .rig { grid-template-columns: 8px minmax(0, 1fr) 8px; padding: 8px 4px 28px; }
+  .cheek { border-radius: 6px; }
+  .chassis { padding: 14px 10px 10px; }
+  .screw { display: none; }
+  .top { grid-template-columns: 1fr; gap: 12px; padding-bottom: 12px; }
+  .brand h1 { font-size: 20px; letter-spacing: 0.22em; }
+  .brand .mark { width: 36px; height: 36px; }
+  .lcd-patch { font-size: 21px; }
+  .lcd-r2 { gap: 2px 12px; font-size: 11px; }
+  .patchbtns .btn.sm { height: 38px; }
+  .transport { justify-content: flex-start; gap: 8px; }
+  .transport .btn { height: 42px; }
+  .btn.play { min-width: 84px; }
+  .tempo { margin-left: auto; }
+
+  .tabs { position: sticky; top: 0; z-index: 20; margin: 10px -4px; background: rgba(11, 12, 14, 0.94); backdrop-filter: blur(6px); }
+  .tabs button { height: 40px; padding: 0 12px; flex: none; }
+  .panel { grid-template-columns: minmax(0, 1fr); }
+  .bay { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-auto-rows: 118px; height: auto; }
+  .bay .gram { display: block; grid-column: 1 / -1; }
+  .meterbox { grid-column: 1 / -1; grid-template-columns: auto 1fr; padding: 6px 10px; }
+  .meter-wrap { min-height: 70px; }
+  .pane, .pane.active { display: grid; grid-column: 1 / -1; grid-template-columns: minmax(0, 1fr); gap: var(--gap); animation: none; }
+  .c2, .c3, .c4, .c8, .c12 { grid-column: 1 / -1; }
+  .dgrid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .knob { --ks: 50px; }
+  .seg button { height: 34px; }
+  .tgl { height: 36px; }
+  .sel select { height: 36px; }
+  .btn { height: 38px; }
+  .seq-head { gap: 10px 12px; }
+  .sh-group.tools { margin-left: 0; }
+  .seq-inner { --gutter: 74px; }
+  .gname { font-size: 9px; padding: 0 4px; }
+  .cell { height: 36px; }
+  .play-body { grid-template-columns: 1fr; }
+  .wheels { justify-content: center; }
+  .wheel { width: 64px; height: 110px; }
+  .kb-col { overflow-x: auto; }
+  .kb { min-width: 620px; height: 140px; }
+  .keys-grid, .patch-cols { grid-template-columns: 1fr; }
+  .kb-tip { display: none; }
+}
+
+@media (min-width: 701px) and (max-width: 1100px) {
+  .dgrid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}

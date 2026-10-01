@@ -1,0 +1,61 @@
+/* MERIDIAN design tokens - "editorial fintech": warm paper / deep ink, hairlines, one signature accent (ultramarine). */
+:root {
+  --font-display: "Segoe UI Variable Display", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --font-text: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --font-mono: "Cascadia Code", "SF Mono", Consolas, "Liberation Mono", monospace;
+
+  /* type scale */
+  --fs-micro: 10.5px; --fs-xs: 11.5px; --fs-sm: 12.5px; --fs-md: 13.5px; --fs-lg: 15px;
+  --fs-xl: 18px; --fs-2xl: 24px; --fs-3xl: 32px; --fs-4xl: 44px;
+
+  /* radii */
+  --r-xs: 6px; --r-sm: 9px; --r-md: 12px; --r-lg: 16px; --r-xl: 22px; --r-pill: 999px;
+
+  /* motion */
+  --ease-out: cubic-bezier(.2, .8, .2, 1);
+  --ease-spring: cubic-bezier(.34, 1.56, .64, 1);
+  --ease-inout: cubic-bezier(.65, 0, .35, 1);
+  --dur-1: 120ms; --dur-2: 200ms; --dur-3: 360ms; --dur-4: 640ms;
+
+  /* density */
+  --gap: 16px; --pad: 28px; --card-pad: 20px; --row-h: 46px; --ctl-h: 36px;
+}
+:root[data-density="compact"] { --gap: 12px; --pad: 22px; --card-pad: 14px; --row-h: 34px; --ctl-h: 32px; }
+
+/* ---------- light: warm paper ---------- */
+:root, :root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f4f1ea; --bg-2: #ece8de; --surface: #fbfaf6; --surface-2: #f6f3ec; --surface-3: #efebe1; --raised: #ffffff;
+  --line: rgba(44, 34, 14, .12); --line-2: rgba(44, 34, 14, .065); --line-strong: rgba(44, 34, 14, .24);
+  --ink: #1b1915; --ink-2: #4a463d; --ink-3: #746e62; --ink-4: #a39c8d;
+  --accent: #3a48d6; --accent-ink: #ffffff; --accent-soft: rgba(58, 72, 214, .09); --accent-line: rgba(58, 72, 214, .38);
+  --pos: #12794f; --pos-soft: rgba(18, 121, 79, .11); --neg: #bd3429; --neg-soft: rgba(189, 52, 41, .10);
+  --warn: #a8640a; --warn-soft: rgba(168, 100, 10, .12); --info: #3a48d6; --info-soft: rgba(58, 72, 214, .09);
+  --sh-1: 0 1px 0 rgba(255, 255, 255, .7) inset, 0 1px 2px rgba(60, 44, 10, .05), 0 8px 22px -12px rgba(60, 44, 10, .16);
+  --sh-2: 0 1px 0 rgba(255, 255, 255, .8) inset, 0 2px 4px rgba(60, 44, 10, .05), 0 18px 38px -14px rgba(60, 44, 10, .24);
+  --sh-3: 0 4px 10px rgba(60, 44, 10, .06), 0 32px 70px -18px rgba(40, 28, 6, .38);
+  --shimmer: rgba(255, 255, 255, .7); --scrim: rgba(28, 22, 8, .34);
+  --heat0: #f1ecfb; --heat1: #3a48d6;
+  --band: rgba(58, 72, 214, .055);
+  /* categorical palette (Okabe-Ito informed, warmed; tested for separation incl. deuteranopia) */
+  --c1: #3a48d6; --c2: #df861b; --c3: #13946d; --c4: #bb3a7c; --c5: #1f9fc6; --c6: #9a78e0; --c7: #8b9918; --c8: #6d7b8a;
+}
+
+/* ---------- dark: deep ink ---------- */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0b0d12; --bg-2: #0f1218; --surface: #12151c; --surface-2: #171b24; --surface-3: #1d222d; --raised: #1a1f2a;
+  --line: rgba(255, 255, 255, .085); --line-2: rgba(255, 255, 255, .05); --line-strong: rgba(255, 255, 255, .18);
+  --ink: #eceae3; --ink-2: #b9b8b1; --ink-3: #8a8b91; --ink-4: #5d5f68;
+  --accent: #8796ff; --accent-ink: #0b0d12; --accent-soft: rgba(135, 150, 255, .13); --accent-line: rgba(135, 150, 255, .42);
+  --pos: #46cf9d; --pos-soft: rgba(70, 207, 157, .13); --neg: #ff7b6b; --neg-soft: rgba(255, 123, 107, .13);
+  --warn: #f2b04f; --warn-soft: rgba(242, 176, 79, .13); --info: #8796ff; --info-soft: rgba(135, 150, 255, .13);
+  --sh-1: 0 1px 0 rgba(255, 255, 255, .035) inset, 0 1px 2px rgba(0, 0, 0, .4), 0 10px 26px -12px rgba(0, 0, 0, .7);
+  --sh-2: 0 1px 0 rgba(255, 255, 255, .05) inset, 0 2px 6px rgba(0, 0, 0, .45), 0 20px 44px -14px rgba(0, 0, 0, .8);
+  --sh-3: 0 6px 14px rgba(0, 0, 0, .5), 0 36px 80px -18px rgba(0, 0, 0, .9);
+  --shimmer: rgba(255, 255, 255, .06); --scrim: rgba(3, 4, 8, .6);
+  --heat0: #171b2c; --heat1: #8796ff;
+  --band: rgba(135, 150, 255, .07);
+  --c1: #7f8fff; --c2: #f2a043; --c3: #3ccaa0; --c4: #ee6fb0; --c5: #4cc4e6; --c6: #b59cf2; --c7: #b8c640; --c8: #9aa7b5;
+}

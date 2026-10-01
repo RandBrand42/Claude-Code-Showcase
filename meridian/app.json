@@ -1,0 +1,10 @@
+{
+  "name": "Meridian",
+  "kind": "Business",
+  "hue": 28,
+  "order": 20,
+  "feature": true,
+  "tagline": "An executive commerce analytics cockpit",
+  "description": "A fictional premium-brand analytics suite: hand-built SVG charts, cohort heatmaps, a US tile-grid cartogram, live order stream, command palette and light/dark themes.",
+  "tech": ["SVG charts", "Seeded data", "Command palette", "Light / dark"]
+}

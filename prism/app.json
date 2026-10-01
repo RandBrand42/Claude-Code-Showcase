@@ -1,0 +1,10 @@
+{
+  "name": "Prism",
+  "kind": "Game",
+  "hue": 320,
+  "order": 70,
+  "feature": false,
+  "tagline": "A light-and-mirror puzzle game",
+  "description": "Bend laser beams with mirrors, splitters and filters to light every target. 24 levels, a daily puzzle, a sandbox and luminous bloom rendering.",
+  "tech": ["Beam tracing", "Solver", "Levels", "Sandbox"]
+}

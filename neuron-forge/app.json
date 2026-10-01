@@ -1,0 +1,10 @@
+{
+  "name": "Neuron Forge",
+  "kind": "Science",
+  "hue": 268,
+  "order": 30,
+  "feature": true,
+  "tagline": "Watch a neural network learn, live",
+  "description": "A from-scratch neural-network laboratory with real backprop, Adam, live decision boundaries, neuron-level heatmaps, challenges and a guided tour.",
+  "tech": ["Backprop", "Adam", "Canvas", "Guided tour"]
+}

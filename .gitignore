@@ -1,0 +1,13 @@
+# working files from verification runs
+_scratch/
+shot.png
+
+# tooling / platform
+node_modules/
+.vercel/
+.DS_Store
+Thumbs.db
+*.log
+
+# Claude Code local settings
+.claude/

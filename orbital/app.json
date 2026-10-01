@@ -1,0 +1,10 @@
+{
+  "name": "Orbital",
+  "kind": "Simulation",
+  "hue": 190,
+  "order": 50,
+  "feature": false,
+  "tagline": "An N-body gravity sandbox",
+  "description": "Launch planets, collide galaxies and thread figure-eight orbits in a glowing gravity simulation with trails, time rewind and a live physics HUD.",
+  "tech": ["N-body", "Canvas", "Verlet", "Time reversal"]
+}
