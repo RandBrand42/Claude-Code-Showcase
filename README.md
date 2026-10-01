@@ -770,3 +770,4 @@ non-zero when the page logged a console error.
 | **SwiftShader** | A software implementation of the graphics card, used so GPU code can run in tests without a GPU |
 | **CDP** | Chrome DevTools Protocol, the interface the test harness uses to drive a browser |
 # Claude-Code-Showcase
+# Claude-Code-Showcase
