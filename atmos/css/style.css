@@ -199,3 +199,8 @@ html[data-ink="dark"] .badge.alert.lv-extreme { color: #b3112b; } html[data-ink=
 .vd.on { cursor: default; background: #000; } .vd.on::after { display: none; } .vd.on iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; } .vd-out { position: absolute; z-index: 2; right: 8px; top: 8px; font-size: 11px; background: rgba(0,10,30,.7); color: #fff; padding: 3px 8px; border-radius: 99px; text-decoration: none; }
 @media (max-width: 720px) { .nw-list { grid-template-columns: 1fr; } .vd-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); } }
 .chip .cn { max-width: calc(100% - 62px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* mood badge + video thumbnails */
+.badge.mood.good { color: #8ff0bb; } .badge.mood.warn { color: #ffd479; } .badge.mood.bad { color: #ff8a8a; }
+html[data-ink="dark"] .badge.mood.good { color: #0b6b3a; } html[data-ink="dark"] .badge.mood.warn { color: #7a5a00; } html[data-ink="dark"] .badge.mood.bad { color: #a31224; }
+.vd-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }

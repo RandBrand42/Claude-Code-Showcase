@@ -87,7 +87,8 @@
       const g = el('div', 'vd-grid');
       for (const v of f.videos) {
         const b = el('button', 'vd'); b.type = 'button'; b.setAttribute('aria-label', 'Play video: ' + v.title);
-        b.append(el('span', 'vd-play', '▶'), el('span', 'vd-t', v.title), el('span', 'vd-c', v.channel + (v.t ? ' · ' + ago(v.t) : '')));
+        const im = document.createElement('img'); im.className = 'vd-img'; im.alt = ''; im.loading = 'lazy'; im.decoding = 'async'; im.referrerPolicy = 'no-referrer'; im.src = 'https://i.ytimg.com/vi/' + v.id + '/mqdefault.jpg';
+        b.append(im, el('span', 'vd-play', '▶'), el('span', 'vd-t', v.title), el('span', 'vd-c', v.channel + (v.t ? ' · ' + ago(v.t) : '')));
         b.addEventListener('click', () => {
           const box = el('div', 'vd on');
           const fr = document.createElement('iframe');
@@ -100,7 +101,7 @@
         g.appendChild(b);
       }
       body.appendChild(g);
-      body.appendChild(el('p', 'al-note', 'Nothing is loaded from YouTube until you press play. Some channels may not allow embedding; use “Open on YouTube” then.'));
+      body.appendChild(el('p', 'al-note', 'Thumbnails come from YouTube when this tab opens (YouTube can see your address then); the player itself loads only when you press play. Some channels may not allow embedding; use “Open on YouTube” then.'));
     }
   }
   P.feeds = function (c) { if (!$('#cNews')) return; $('#cNews').hidden = !c.live; if (c.live) renderNews(Live.fd[c.id]); };

@@ -29,33 +29,33 @@
   const CITIES = [
     { id: 'dal', name: 'Dallas', region: 'Texas', live: true, country: 'US', lat: 32.78, lon: -96.8, zone: 'America/Chicago', tz: -5, mean: 19.5, amp: 11.5, diurnal: 10, wet: 0.32, storm: 0.7, windy: 0.6, fog: 0.08, humid: 0.62, aqi: 48, sky: 'skyline', seed: 101 },
     { id: 'ftw', name: 'Fort Worth', region: 'Texas', live: true, country: 'US', lat: 32.75, lon: -97.33, zone: 'America/Chicago', tz: -5, mean: 19, amp: 11.5, diurnal: 11, wet: 0.3, storm: 0.7, windy: 0.65, fog: 0.06, humid: 0.58, aqi: 44, sky: 'hills', seed: 103 },
-    { id: 'san', name: 'San Diego', region: 'California', live: true, country: 'US', lat: 32.72, lon: -117.16, zone: 'America/Los_Angeles', tz: -7, mean: 18, amp: 4.5, diurnal: 6, wet: 0.12, storm: 0.03, windy: 0.4, fog: 0.38, humid: 0.68, aqi: 42, sky: 'harbour', seed: 107 },
-    { id: 'oce', name: 'Oceanside', region: 'California', live: true, country: 'US', lat: 33.2, lon: -117.38, zone: 'America/Los_Angeles', tz: -7, mean: 17.5, amp: 4.5, diurnal: 6.5, wet: 0.12, storm: 0.03, windy: 0.4, fog: 0.4, humid: 0.7, aqi: 38, sky: 'hills', seed: 109 },
+    { id: 'san', name: 'San Diego', region: 'California', live: true, coast: true, country: 'US', lat: 32.72, lon: -117.16, zone: 'America/Los_Angeles', tz: -7, mean: 18, amp: 4.5, diurnal: 6, wet: 0.12, storm: 0.03, windy: 0.4, fog: 0.38, humid: 0.68, aqi: 42, sky: 'harbour', seed: 107 },
+    { id: 'oce', name: 'Oceanside', region: 'California', live: true, coast: true, country: 'US', lat: 33.2, lon: -117.38, zone: 'America/Los_Angeles', tz: -7, mean: 17.5, amp: 4.5, diurnal: 6.5, wet: 0.12, storm: 0.03, windy: 0.4, fog: 0.4, humid: 0.7, aqi: 38, sky: 'hills', seed: 109 },
     { id: 'dc', name: 'Washington, D.C.', region: 'District of Columbia', live: true, country: 'US', lat: 38.91, lon: -77.04, zone: 'America/New_York', tz: -4, mean: 14, amp: 12.5, diurnal: 8.5, wet: 0.42, storm: 0.35, windy: 0.4, fog: 0.12, humid: 0.66, aqi: 46, sky: 'skyline', seed: 113 },
     { id: 'sea', name: 'Seattle', region: 'Washington', live: true, country: 'US', lat: 47.61, lon: -122.33, zone: 'America/Los_Angeles', tz: -7, mean: 11.5, amp: 6.5, diurnal: 6, wet: 0.75, storm: 0.05, windy: 0.35, fog: 0.25, humid: 0.74, aqi: 34, sky: 'pines', seed: 127 },
-    { id: 'mia', name: 'Miami', region: 'Florida', live: true, country: 'US', lat: 25.76, lon: -80.19, zone: 'America/New_York', tz: -4, mean: 25.5, amp: 4, diurnal: 6, wet: 0.7, storm: 0.9, windy: 0.45, fog: 0.02, humid: 0.78, aqi: 40, sky: 'towers', seed: 131 },
+    { id: 'mia', name: 'Miami', region: 'Florida', live: true, coast: true, country: 'US', lat: 25.76, lon: -80.19, zone: 'America/New_York', tz: -4, mean: 25.5, amp: 4, diurnal: 6, wet: 0.7, storm: 0.9, windy: 0.45, fog: 0.02, humid: 0.78, aqi: 40, sky: 'towers', seed: 131 },
     { id: 'orl', name: 'Orlando', region: 'Florida', live: true, country: 'US', lat: 28.54, lon: -81.38, zone: 'America/New_York', tz: -4, mean: 23.5, amp: 6, diurnal: 9, wet: 0.6, storm: 1, windy: 0.35, fog: 0.12, humid: 0.74, aqi: 38, sky: 'hills', seed: 137 },
-    { id: 'tpa', name: 'Tampa', region: 'Florida', live: true, country: 'US', lat: 27.95, lon: -82.46, zone: 'America/New_York', tz: -4, mean: 23.5, amp: 6.5, diurnal: 8, wet: 0.55, storm: 0.9, windy: 0.4, fog: 0.12, humid: 0.74, aqi: 36, sky: 'harbour', seed: 139 },
-    { id: 'jax', name: 'Jacksonville', region: 'Florida', live: true, country: 'US', lat: 30.33, lon: -81.66, zone: 'America/New_York', tz: -4, mean: 21, amp: 8, diurnal: 9, wet: 0.5, storm: 0.6, windy: 0.45, fog: 0.2, humid: 0.74, aqi: 38, sky: 'harbour', seed: 149 },
+    { id: 'tpa', name: 'Tampa', region: 'Florida', live: true, coast: true, country: 'US', lat: 27.95, lon: -82.46, zone: 'America/New_York', tz: -4, mean: 23.5, amp: 6.5, diurnal: 8, wet: 0.55, storm: 0.9, windy: 0.4, fog: 0.12, humid: 0.74, aqi: 36, sky: 'harbour', seed: 139 },
+    { id: 'jax', name: 'Jacksonville', region: 'Florida', live: true, coast: true, country: 'US', lat: 30.33, lon: -81.66, zone: 'America/New_York', tz: -4, mean: 21, amp: 8, diurnal: 9, wet: 0.5, storm: 0.6, windy: 0.45, fog: 0.2, humid: 0.74, aqi: 38, sky: 'harbour', seed: 149 },
     { id: 'clt', name: 'Charlotte', region: 'North Carolina', live: true, country: 'US', lat: 35.23, lon: -80.84, zone: 'America/New_York', tz: -4, mean: 16.5, amp: 10.5, diurnal: 10, wet: 0.45, storm: 0.5, windy: 0.3, fog: 0.2, humid: 0.68, aqi: 44, sky: 'skyline', seed: 151 },
     { id: 'ral', name: 'Raleigh', region: 'North Carolina', live: true, country: 'US', lat: 35.78, lon: -78.64, zone: 'America/New_York', tz: -4, mean: 15.5, amp: 10.5, diurnal: 10.5, wet: 0.45, storm: 0.5, windy: 0.3, fog: 0.22, humid: 0.7, aqi: 40, sky: 'pines', seed: 157 },
-    { id: 'ilm', name: 'Wilmington', region: 'North Carolina', live: true, country: 'US', lat: 34.23, lon: -77.94, zone: 'America/New_York', tz: -4, mean: 18, amp: 8.5, diurnal: 7.5, wet: 0.5, storm: 0.5, windy: 0.5, fog: 0.2, humid: 0.76, aqi: 34, sky: 'harbour', seed: 163 },
+    { id: 'ilm', name: 'Wilmington', region: 'North Carolina', live: true, coast: true, country: 'US', lat: 34.23, lon: -77.94, zone: 'America/New_York', tz: -4, mean: 18, amp: 8.5, diurnal: 7.5, wet: 0.5, storm: 0.5, windy: 0.5, fog: 0.2, humid: 0.76, aqi: 34, sky: 'harbour', seed: 163 },
     { id: 'tyo', name: 'Tokyo', region: 'Japan', live: true, country: 'JP', lat: 35.68, lon: 139.69, zone: 'Asia/Tokyo', tz: 9, mean: 16.5, amp: 11, diurnal: 6.5, wet: 0.45, storm: 0.3, windy: 0.3, fog: 0.08, humid: 0.65, aqi: 46, sky: 'skyline', seed: 53 },
     { id: 'osa', name: 'Osaka', region: 'Japan', live: true, country: 'JP', lat: 34.69, lon: 135.5, zone: 'Asia/Tokyo', tz: 9, mean: 17, amp: 11.5, diurnal: 7, wet: 0.4, storm: 0.3, windy: 0.3, fog: 0.08, humid: 0.65, aqi: 52, sky: 'towers', seed: 167 },
     { id: 'spk', name: 'Sapporo', region: 'Japan', live: true, country: 'JP', lat: 43.06, lon: 141.35, zone: 'Asia/Tokyo', tz: 9, mean: 9, amp: 12.5, diurnal: 8, wet: 0.4, storm: 0.1, windy: 0.45, fog: 0.15, humid: 0.68, aqi: 20, sky: 'peaks', seed: 173 },
-    { id: 'fuk', name: 'Fukuoka', region: 'Japan', live: true, country: 'JP', lat: 33.59, lon: 130.4, zone: 'Asia/Tokyo', tz: 9, mean: 17.5, amp: 10.5, diurnal: 6.5, wet: 0.45, storm: 0.3, windy: 0.5, fog: 0.08, humid: 0.68, aqi: 40, sky: 'harbour', seed: 179 },
-    { id: 'nah', name: 'Naha', region: 'Japan (Okinawa)', live: true, country: 'JP', lat: 26.21, lon: 127.68, zone: 'Asia/Tokyo', tz: 9, mean: 24, amp: 5, diurnal: 4.5, wet: 0.6, storm: 0.5, windy: 0.6, fog: 0.03, humid: 0.78, aqi: 28, sky: 'harbour', seed: 181 },
+    { id: 'fuk', name: 'Fukuoka', region: 'Japan', live: true, coast: true, country: 'JP', lat: 33.59, lon: 130.4, zone: 'Asia/Tokyo', tz: 9, mean: 17.5, amp: 10.5, diurnal: 6.5, wet: 0.45, storm: 0.3, windy: 0.5, fog: 0.08, humid: 0.68, aqi: 40, sky: 'harbour', seed: 179 },
+    { id: 'nah', name: 'Naha', region: 'Japan (Okinawa)', live: true, coast: true, country: 'JP', lat: 26.21, lon: 127.68, zone: 'Asia/Tokyo', tz: 9, mean: 24, amp: 5, diurnal: 4.5, wet: 0.6, storm: 0.5, windy: 0.6, fog: 0.03, humid: 0.78, aqi: 28, sky: 'harbour', seed: 181 },
     { id: 'rey', name: 'Reykjavik', region: 'Iceland', live: false, lat: 64.1, tz: 0, mean: 4.5, amp: 8, diurnal: 5, wet: 0.8, storm: 0.05, windy: 0.95, fog: 0.4, humid: 0.78, aqi: 14, sky: 'hills', seed: 11 },
-    { id: 'sin', name: 'Singapore', region: 'Singapore', live: false, lat: 1.3, tz: 8, mean: 27.5, amp: 1, diurnal: 7, wet: 0.8, storm: 1, windy: 0.22, fog: 0.04, humid: 0.85, aqi: 52, sky: 'towers', seed: 23 },
+    { id: 'sin', name: 'Singapore', region: 'Singapore', live: false, coast: true, lat: 1.3, tz: 8, mean: 27.5, amp: 1, diurnal: 7, wet: 0.8, storm: 1, windy: 0.22, fog: 0.04, humid: 0.85, aqi: 52, sky: 'towers', seed: 23 },
     { id: 'rak', name: 'Marrakesh', region: 'Morocco', live: false, lat: 31.6, tz: 1, mean: 20.5, amp: 10.5, diurnal: 14, wet: 0.1, storm: 0.05, windy: 0.4, fog: 0, humid: 0.3, aqi: 68, sky: 'dunes', seed: 37 },
     { id: 'van', name: 'Vancouver', region: 'Canada', live: false, lat: 49.3, tz: -7, mean: 10.5, amp: 7.5, diurnal: 6, wet: 0.7, storm: 0.1, windy: 0.35, fog: 0.4, humid: 0.72, aqi: 26, sky: 'pines', seed: 41 },
-    { id: 'syd', name: 'Sydney', region: 'Australia', live: false, lat: -33.9, tz: 10, mean: 18, amp: 5.5, diurnal: 6, wet: 0.35, storm: 0.25, windy: 0.45, fog: 0.05, humid: 0.62, aqi: 24, sky: 'harbour', seed: 67 },
+    { id: 'syd', name: 'Sydney', region: 'Australia', live: false, coast: true, lat: -33.9, tz: 10, mean: 18, amp: 5.5, diurnal: 6, wet: 0.35, storm: 0.25, windy: 0.45, fog: 0.05, humid: 0.62, aqi: 24, sky: 'harbour', seed: 67 },
     { id: 'den', name: 'Denver', region: 'United States', live: false, lat: 39.7, tz: -6, mean: 10.5, amp: 13.5, diurnal: 14, wet: 0.28, storm: 0.3, windy: 0.5, fog: 0.05, humid: 0.4, aqi: 48, sky: 'peaks', seed: 79 },
-    { id: 'cpt', name: 'Cape Town', region: 'South Africa', live: false, lat: -33.9, tz: 2, mean: 17.5, amp: 5, diurnal: 7, wet: 0.3, storm: 0.1, windy: 0.85, fog: 0.15, humid: 0.6, aqi: 32, sky: 'table', seed: 97 },
+    { id: 'cpt', name: 'Cape Town', region: 'South Africa', live: false, coast: true, lat: -33.9, tz: 2, mean: 17.5, amp: 5, diurnal: 7, wet: 0.3, storm: 0.1, windy: 0.85, fog: 0.15, humid: 0.6, aqi: 32, sky: 'table', seed: 97 },
   ];
   CITIES.forEach((c) => { c._ac = {}; c._dc = {}; });
 
-  const D = { cities: CITIES, base: Date.now() / 3600000, shift: 0, override: null, units: { t: 'C', w: 'kmh' } };
+  const D = { cities: CITIES, base: Date.now() / 3600000, shift: 0, override: null, overrideFor: null, units: { t: 'C', w: 'kmh' } };
   A.Data = D;
   D.invalidate = () => CITIES.forEach((c) => { c._dc = {}; });
   D.localNow = (city) => D.base + D.shift + city.tz;
@@ -118,8 +118,10 @@
     return out;
   }
   function sample(city, L) {
-    if (city.live && !D.override && A.Live && A.Live.has(city)) return sampleLive(city, L);
-    const s = city.seed, a = astro(city, L), hod = a.hod, o = D.override;
+    // a weather scene applies to every demo city but, for live cities, only to the one being viewed: the others keep showing real conditions
+    const o = D.override && (!city.live || D.overrideFor === city.id) ? D.override : null;
+    if (city.live && !o && A.Live && A.Live.has(city)) return sampleLive(city, L);
+    const s = city.seed, a = astro(city, L), hod = a.hod;
     const seas = -Math.cos(TAU * (a.doy - 15) / 365) * (city.lat < 0 ? -1 : 1);
     const wetN = fbm(s, L / 26), cloudN = fbm(s + 5, L / 19), tempN = fbm(s + 9, L / 60) - 0.5;
     const windN = fbm(s + 13, L / 14), stormN = fbm(s + 19, L / 9), fogN = fbm(s + 23, L / 11);
@@ -177,6 +179,11 @@
     if (o && o.r !== undefined) out.pop = Math.round(55 + 45 * r);
     if (out.pop < 6 && r > 0.05) out.pop = 30;
     if (r < 0.03 && out.pop > 55) out.pop = 55;
+    if (o) {                                  // scene presets may also pin UV, air quality and temperature
+      if (o.uv !== undefined) out.uv = o.uv * smooth(-2, 25, a.alt);
+      if (o.aqi !== undefined) out.aqi = o.aqi;
+      if (o.temp !== undefined) { out.temp = o.temp + 3 * Math.cos(TAU * (hod - 15) / 24); out.feels = out.temp; }
+    }
     out.cond = classify(out, out.night);
     return out;
   }

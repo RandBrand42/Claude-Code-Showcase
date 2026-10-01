@@ -79,5 +79,16 @@ Also: Orbital and Mnemo gained inline favicons (they logged a 404 for `/favicon.
 
 **Not verified:** the Vercel deployment of the function, embeddability and live-stream status of each YouTube channel, JMA with a real active warning, Firefox / Safari. **Licence note:** Open-Meteo's free tier is non-commercial and needs attribution (included).
 
+## Batch B6 - Atmos: weather-driven scenery and video thumbnails
+
+| Area | Change | Evidence |
+|---|---|---|
+| **Atmos** | New `js/scene.js`: weather moods with a hero badge (perfect beach day, very high / extreme UV, smoky air, thunderstorm, very windy, extreme heat) and new layers: beach (sea, waves, glitter, surf, sand, palms, gulls), UV glare and lens flare, smoke veil and motes, storm deck with inner lightning, stratus for overcast, blown leaves and dust, ground mist, rainbow. | Nine scenes screenshotted, correct badges, 0 console errors |
+| **Atmos** | Scenes added: Beach day, Extreme UV, Smoky haze, Gale, Rainbow. A scene now applies only to the viewed live city; other live cities keep real data. | Chips checked while a scene was active |
+| **Atmos** | Video thumbnails restored as lazy `<img>` tags (no referrer); player still loads only on press. | 12 of 12 loaded |
+| **Atmos** | No pollen layer: the free source has no pollen outside Europe (Dallas and Tokyo returned nothing). | Probed |
+
+**Not verified:** smoothness on a real GPU, the rainbow in motion, phone layout of the beach.
+
 ### Not yet done (from the same feedback list)
-Nothing outstanding from that list. Remaining ideas: a marked-up Vercel preview check, an NWS forecast-discussion panel, more cities on request.
+Resonance genre dissonance (deferred by request; cannot be judged without hearing it). Nothing else outstanding. Remaining ideas: a marked-up Vercel preview check, an NWS forecast-discussion panel, more cities on request.

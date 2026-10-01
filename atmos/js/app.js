@@ -20,6 +20,11 @@
     { id: 'fog', label: 'Fog', when: 'morning', o: { cloud: 0.5, fog: 0.9, wind: 3 } },
     { id: 'heat', label: 'Heatwave', when: 'noon', o: { cloud: 0, heat: 1, wind: 6 } },
     { id: 'overcast', label: 'Overcast', when: 'noon', o: { cloud: 0.96, wind: 16 } },
+    { id: 'beach', label: 'Beach day', when: 'noon', o: { cloud: 0.12, wind: 12, temp: 29, uv: 7 } },
+    { id: 'uv', label: 'Extreme UV', when: 'noon', o: { cloud: 0.02, wind: 6, temp: 35, uv: 12 } },
+    { id: 'smoke', label: 'Smoky haze', when: 'golden', o: { cloud: 0.2, wind: 6, aqi: 175 } },
+    { id: 'rainbow', label: 'Rainbow', when: 'golden', o: { cloud: 0.4, r: 0.2, ptype: 'rain', wind: 9 } },
+    { id: 'gale', label: 'Gale', when: 'noon', o: { cloud: 0.55, wind: 62 } },
   ];
   let sceneId = 'live';
 
@@ -35,10 +40,10 @@
 
   function rebuild(keepT) {
     D.invalidate(); S.f = D.forecast(city()); UI._sel = -1; UI.buildCity(S.f); if (!keepT) S.t = 0; S.iconKey = ''; S.sumKey = ''; S.dirty = true; S.lastChips = 0;
-    Sky.setCity(city().sky, city().seed);
+    Sky.setCity(city().sky, city().seed); Sky.setCoast(city().coast);
   }
   function selectCity(i) {
-    S.ci = (i + D.cities.length) % D.cities.length; rebuild(true); live(city());
+    S.ci = (i + D.cities.length) % D.cities.length; if (D.override) D.overrideFor = city().id; rebuild(true); live(city());
     try { localStorage.setItem('atmos.city', city().id); } catch (e) { /* storage unavailable */ }
     const chip = document.querySelectorAll('.chip')[S.ci]; if (chip) chip.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', inline: 'center', block: 'nearest' });
   }
@@ -51,7 +56,7 @@
   }
   function setScene(id, hourOverride) {
     const sc = SCENES.find((s) => s.id === id) || SCENES[0]; sceneId = sc.id;
-    if (sc.id === 'live') { D.override = null; D.shift = 0; } else { D.override = Object.assign({}, sc.o); if (sc.when) setHour(hourFor(sc.when)); }
+    if (sc.id === 'live') { D.override = null; D.overrideFor = null; D.shift = 0; } else { D.override = Object.assign({}, sc.o); D.overrideFor = city().id; if (sc.when) setHour(hourFor(sc.when)); }
     if (hourOverride !== undefined) setHour(hourOverride);
     rebuild(false);
     document.querySelectorAll('#sceneGrid button').forEach((b) => b.classList.toggle('on', b.dataset.id === sceneId));
@@ -71,7 +76,9 @@
     if (S.playing) { S.t += dt * 2.4; if (S.t >= 48) S.t -= 48; S.dirty = true; }
     const p = S.intro < 1 ? (S.intro = Math.min(1, S.intro + dt / 2.8)) : 1, off = 9 * Math.pow(1 - p, 3);
     const w = sampleAt(S.t), ws = off > 0.01 ? sampleAt(S.t - off) : w;
-    Sky.set({ theta: ws.theta, maxAlt: ws.maxAlt, alt: ws.alt, moonTheta: ws.moonTheta, moonPhase: ws.moonPhase, illum: ws.moonIllum, cloud: ws.cloud, rain: ws.rain, snow: ws.snow, storm: ws.storm, fog: ws.fog, heat: ws.heat, wind: ws.wind, windX: ws.windX });
+    const mood = A.Scene.mood(ws, city()); A.Sky.env.mood = mood;
+    Sky.set({ uvx: mood.uvx, haze: mood.haze, beach: city().coast ? mood.beach : 0, theta: ws.theta, maxAlt: ws.maxAlt, alt: ws.alt, moonTheta: ws.moonTheta, moonPhase: ws.moonPhase, illum: ws.moonIllum, cloud: ws.cloud, rain: ws.rain, snow: ws.snow, storm: ws.storm, fog: ws.fog, heat: Math.max(ws.heat, mood.uvx * 0.6), wind: ws.wind, windX: ws.windX });
+    if (mood.label !== S.moodKey) { S.moodKey = mood.label; const mb = $('#hMood'); mb.hidden = !mood.label; mb.textContent = mood.label; mb.className = 'badge mood ' + mood.tone; }
     // hero
     const target = F.cvt(w.temp); S.shown += (target - S.shown) * (1 - Math.exp(-dt * (S.intro < 1 ? 5 : 11))); if (Math.abs(target - S.shown) < 0.05) S.shown = target;
     $('#hTemp').textContent = Math.round(S.shown) + '°';

@@ -59,7 +59,7 @@
     D.cities.forEach((c, i) => {
       const e = chipEls[i], L = D.localNow(c) + t, w = D.sample(c, L), hod = ((L % 24) + 24) % 24;
       e.b.style.background = A.Sky.css(w.alt, w, w.theta < 0.5); e.b.setAttribute('aria-current', i === cur ? 'true' : 'false');
-      const pending = c.live && !D.override && !(A.Live && A.Live.has(c));      // a live city whose real data has not arrived: do not show invented numbers as if real
+      const pending = c.live && D.overrideFor !== c.id && !(A.Live && A.Live.has(c));      // a live city whose real data has not arrived: do not show invented numbers as if real
       e.ct.textContent = pending ? `${F.hour(hod)} · ${A.Live && A.Live.status(c) === 'error' ? 'Offline' : 'Loading\u2026'}` : `${F.hour(hod)} · ${w.cond.label}`; e.cd.textContent = pending ? '' : F.temp(w.temp);
       if (e.key !== w.cond.icon) { e.key = w.cond.icon; e.ci.innerHTML = A.icon(w.cond.icon); }
       e.b.classList.toggle('rainy', w.rain > 0.15 || w.storm > 0.3); e.b.classList.toggle('snowy', w.snow > 0.15);

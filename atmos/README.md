@@ -53,10 +53,46 @@ Tokyo, Osaka, Sapporo, Fukuoka, Naha (Japan). The search box matches states, so 
   Meteorological Agency** warnings for the matching region, and **USGS** earthquakes of M4.5+ within 400 km in the last day. Each shows severity, area, times,
   what to do and a link to the official source.
 - **Local news and video:** headlines from the stations' own RSS feeds (ABC, NBC, CBS and FOX affiliates and others per city; the Japan Times, Japan Today and
-  NHK for Japan) and recent videos from the stations' YouTube channels, with links to each channel's live stream. Nothing from YouTube loads until you press
-  play, and the player is the privacy-enhanced embed in a sandboxed frame.
+  NHK for Japan) and recent videos from the stations' YouTube channels, with links to each channel's live stream. Thumbnails come from YouTube when the Video tab opens; the player
+  loads only when you press play, as the privacy-enhanced embed in a sandboxed frame.
 
 ![News and video](screenshots/live-news-video.png)
+
+### Scenery that follows the weather (third round)
+
+The background now reacts to more than cloud and rain. Each reading is turned into a few smooth "moods" (`js/scene.js`), and the badge under the temperature names
+the notable one:
+
+| Mood | When | What changes |
+|---|---|---|
+| **Perfect beach day** (coastal cities) | daytime, 22-37 C, mostly clear, light wind, dry, clean air | a sea with drifting waves and sun glitter, surf creeping up a sand beach, palm trees swaying, gulls overhead; the city fades to a far shore |
+| **Very high / Extreme UV** | UV index 8+ / 11+ | white-hot glare around the sun, a warm wash over the sky, heat shimmer, lens-flare ghosts |
+| **Smoky haze / Unhealthy air** | US AQI 101+ / 151+ | brown smoke veil, a dim orange sun, drifting ash motes |
+| **Thunderstorm overhead** | storm conditions | a low boiling dark cloud deck, lightning that lights the clouds from inside between the big bolts, bruised-green light on the horizon, mist off the ground |
+| **Overcast** | thick cloud | flat drifting stratus bands and a heavy dull underside |
+| **Very windy** | wind 55+ km/h | leaves and dust blown across the screen |
+| **Rainbow** | light rain breaking with the sun low | a faint rainbow opposite the sun |
+| **Sunny day** | clear daytime | lens flare, a few gulls |
+
+Weather scenes (the sliders button) gained Beach day, Extreme UV, Smoky haze, Gale and Rainbow so any of these can be previewed on demand; scenes now apply to the city
+you are viewing, and live cities elsewhere keep showing real conditions.
+
+![Beach](screenshots/scene-beach.png) ![Extreme UV](screenshots/scene-uv.png)
+![Smoky haze](screenshots/scene-smoke.png) ![Thunderstorm](screenshots/scene-storm.png)
+
+**Pollen is not shown, on purpose.** The free forecast service has pollen data only for Europe: I checked Dallas and Tokyo and every pollen value came back empty. Rather than
+invent one, there is no pollen layer. If you later have a source for these regions (or want European cities), it can drive the same kind of effect.
+
+**Video thumbnails** are back: they load from YouTube when you open the Video tab (YouTube can see your address then); the player itself still loads only when you press play.
+Edge's tracking-prevention may log harmless console warnings about them.
+
+**Performance:** every new layer is skipped when its amount is about zero, uses pre-built sprites or a handful of paths, and the existing adaptive quality control and
+`prefers-reduced-motion` setting apply to it. In my software-rendered test browser (no GPU) quality settled at its floor, so I could not judge smoothness on real hardware;
+you reported the hosted app running well, so please tell me if the beach, storm or smoke scenes feel heavy on your machine.
+
+**Verified:** all nine scenes (beach, UV, smoke, gale, storm, overcast, rainbow, clear, fog) screenshotted with the right mood badge and no console errors; 12 of 12 video thumbnails
+loaded; the existing unit tests and the data self-check still pass. **Not verified:** how the animation feels in motion on a GPU, the rainbow (it is faint and I only saw it
+in stills), and the look on a phone for the beach palms.
 
 **How it is built.** Browsers can read Open-Meteo, NWS, JMA and USGS directly (they send CORS headers), so those calls come from the page
 (`js/live.js`: one request per batch of up to six cities, answers cached for ten minutes per tab, a refresh never drops good data back to the simulation).

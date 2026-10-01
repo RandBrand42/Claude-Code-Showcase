@@ -45,9 +45,9 @@
   Sky.css = (alt, w, morning) => { const p = palette(alt, w, morning); return `linear-gradient(180deg,${rgb(p.top)} 0%,${rgb(p.mid)} 55%,${rgb(p.hor)} 100%)`; };
 
   // ---------- state ----------
-  const S = { alt: 30, sx: 0.5, sy: 0.4, mx: 0.5, my: 1.2, cloud: 0.2, rain: 0, snow: 0, storm: 0, fog: 0, heat: 0, wind: 10, windX: 10, phase: 0.5, illum: 1, morning: 0, par: 0 };
+  const S = { alt: 30, sx: 0.5, sy: 0.4, mx: 0.5, my: 1.2, cloud: 0.2, rain: 0, snow: 0, storm: 0, fog: 0, heat: 0, wind: 10, windX: 10, phase: 0.5, illum: 1, morning: 0, par: 0, uvx: 0, haze: 0, beach: 0 };
   const T = Object.assign({}, S, { moonPhase: 0.5 });
-  const SM = ['alt', 'sx', 'sy', 'mx', 'my', 'cloud', 'rain', 'snow', 'storm', 'fog', 'heat', 'wind', 'windX', 'illum'];
+  const SM = ['alt', 'sx', 'sy', 'mx', 'my', 'cloud', 'rain', 'snow', 'storm', 'fog', 'heat', 'wind', 'windX', 'illum', 'uvx', 'haze', 'beach'];
   let cv, ctx, W = 0, H = 0, rs = 1, yH = 0, quality = 1, reduced = false, t = 0, frameEMA = 16, snapNext = true;
   let lastMoonKey = '', moonSprite = null, flash = 0, thunder = 0, thunderAt = -1, bolt = null, boltT = 0, nextStrike = 4, flashVar = -1;
   const info = Sky.info = { lum: 0.3, mid: [80, 150, 220], hor: [160, 210, 240], day: 1 };
@@ -155,6 +155,9 @@
   Sky.strike = (x) => { bolt = makeBolt(x === undefined ? W * (0.15 + 0.7 * R()) : x); boltT = 0; thunderAt = 0.7 + R() * 1.4; thunder = 0; };
   const flashCurve = (s) => (s < 0.05 ? s / 0.05 : s < 0.11 ? 1 - (s - 0.05) / 0.06 * 0.65 : s < 0.19 ? 0.35 + (s - 0.11) / 0.08 * 0.6 : 0.95 * Math.exp(-(s - 0.19) * 7));
 
+  Sky.tools = { mk, cloudTile };                    // shared with scene.js
+  const E = (Sky.env = { S, quality: 1, far: [10, 16, 30], hor: [160, 200, 230], mood: null, coast: false });
+
   // ---------- public API ----------
   Sky.init = function (canvas) {
     cv = canvas; ctx = cv.getContext('2d'); reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -170,6 +173,7 @@
     buildClouds(); sky = buildSkyline(wantType, Sky._seed || 1); prevSky = null; skyFade = 1;
   };
   Sky.setCity = function (type, seed) { if (sky && sky.type === type && Sky._seed === seed) return; Sky._seed = seed; wantType = type; if (!W) return; prevSky = sky; sky = buildSkyline(type, seed); skyFade = prevSky ? 0 : 1; };
+  Sky.setCoast = function (c) { E.coast = !!c; };
   Sky.set = function (o, snap) { Object.assign(T, o); if (snap) snapNext = true; };
 
   function targetXY() {
@@ -191,6 +195,7 @@
     const w = { cloud: S.cloud, rain: S.rain, snow: S.snow, storm: S.storm, fog: S.fog, heat: S.heat };
     const pal = palette(S.alt, w, S.morning); Object.assign(info, { lum: pal.lum, mid: pal.mid, hor: pal.hor, day: pal.day });
     const day = pal.day, night = smooth(-4, -15, S.alt), tw = pal.tw;
+    Object.assign(E, { ctx, W, H, rs, yH, t, dt, reduced, quality, day, hor: pal.hor, far: mix3(pal.hor, [16, 24, 40], 0.6), clear: clamp(1 - S.cloud * 1.4 - S.fog - S.storm, 0, 1) * (1 - S.haze * 0.5) });
     ctx.setTransform(rs, 0, 0, rs, 0, 0); ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
     // sky gradient
     const gr = ctx.createLinearGradient(0, 0, 0, yH + 10); gr.addColorStop(0, rgb(pal.top)); gr.addColorStop(0.55, rgb(pal.mid)); gr.addColorStop(1, rgb(pal.hor));
@@ -206,9 +211,9 @@
     }
     // horizon glow (twilight band) and sun
     ctx.globalCompositeOperation = 'lighter';
-    const sc = sunColor(S.alt);
+    const sc = S.haze > 0.02 ? mix3(sunColor(S.alt), [255, 118, 54], clamp(S.haze * 0.7, 0, 0.75)) : sunColor(S.alt);
     if (tw > 0.02) { const gw = ctx.createRadialGradient(S.sx, yH, 0, S.sx, yH, W * 0.7); gw.addColorStop(0, rgb(sc, 0.5 * tw * (1 - S.cloud * 0.4))); gw.addColorStop(1, rgb(sc, 0)); ctx.save(); ctx.translate(0, yH); ctx.scale(1, 0.55); ctx.translate(0, -yH); ctx.fillStyle = gw; ctx.fillRect(0, yH - W, W, W * 1.3); ctx.restore(); }
-    const sunR = clamp(Math.min(W, H) * 0.038, 20, 46), sunVis = clamp(1 - S.cloud * 0.6 - S.fog * 0.35 - S.storm * 0.4, 0.06, 1) * smooth(-4, 1, S.alt + (yH - S.sy) / 60);
+    const sunR = clamp(Math.min(W, H) * 0.038, 20, 46), sunVis = clamp(1 - S.cloud * 0.6 - S.fog * 0.35 - S.storm * 0.4 - S.haze * 0.3, 0.06, 1) * smooth(-4, 1, S.alt + (yH - S.sy) / 60);
     if (S.sy < yH + sunR * 2 && sunVis > 0.02) {
       let g2 = ctx.createRadialGradient(S.sx, S.sy, 0, S.sx, S.sy, sunR * 11); g2.addColorStop(0, rgb(sc, 0.5 * sunVis)); g2.addColorStop(0.25, rgb(sc, 0.14 * sunVis)); g2.addColorStop(1, rgb(sc, 0)); ctx.fillStyle = g2; ctx.fillRect(S.sx - sunR * 11, S.sy - sunR * 11, sunR * 22, sunR * 22);
       if (!reduced && tw > 0.05 && S.cloud > 0.08 && S.cloud < 0.92) { // god rays
@@ -218,6 +223,7 @@
       const g3 = ctx.createRadialGradient(S.sx, S.sy, sunR * 0.2, S.sx, S.sy, sunR); g3.addColorStop(0, 'rgba(255,255,250,' + sunVis + ')'); g3.addColorStop(0.8, rgb(sc, sunVis * 0.95)); g3.addColorStop(1, rgb(sc, 0)); ctx.fillStyle = g3; ctx.beginPath(); ctx.arc(S.sx, S.sy, sunR * 1.06, 0, TAU); ctx.fill();
     }
     ctx.globalCompositeOperation = 'source-over';
+    E.sunR = sunR; A.Scene.stage('sun', E);
     // moon
     const mR = clamp(Math.min(W, H) * 0.034, 18, 40), mAlpha = smooth(-2, -9, S.alt) * (1 - S.cloud * 0.8) * (1 - S.fog * 0.8) * smooth(-0.1, 0.3, T.moonTheta) * smooth(1.1, 0.7, T.moonTheta);
     if (mAlpha > 0.02 && S.my < yH + mR) {
@@ -252,6 +258,7 @@
     }
     if (f > 0.01) { ctx.fillStyle = `rgba(185,200,255,${0.4 * f})`; ctx.fillRect(0, 0, W, yH); }
     if (thunder > 0.01 && bolt) { const tg = ctx.createRadialGradient(bolt.x, H * 0.2, 0, bolt.x, H * 0.2, W * 0.6); const ta = 0.2 * Math.sin(Math.PI * (1 - thunder)); tg.addColorStop(0, `rgba(130,150,215,${ta})`); tg.addColorStop(1, 'rgba(130,150,215,0)'); ctx.fillStyle = tg; ctx.fillRect(0, 0, W, yH); }
+    A.Scene.stage('deck', E);
     // horizon layers (tinted silhouettes), crossfading between cities
     const drawSky = (sk, alpha) => {
       const hc = pal.hor, farC = mix3(hc, [16, 24, 40], 0.5 + 0.25 * (1 - day)), nearC = mix3(hc, [6, 10, 20], 0.86);
@@ -264,7 +271,9 @@
       });
       const wa = smooth(-2, -9, S.alt) * alpha * (0.85 + 0.1 * Math.sin(t * 0.7)); if (wa > 0.02) { ctx.globalAlpha = wa * 0.95; ctx.drawImage(sk.win, 0, 0, sk.win.width, sk.win.height, S.par * -10, 0, W, H); ctx.globalAlpha = 1; }
     };
-    if (prevSky && skyFade < 1) { drawSky(sky, 1); drawSky(prevSky, 1 - skyFade); } else drawSky(sky, 1);
+    const sk0 = 1 - 0.7 * S.beach;     // at the beach the city is a faint far shore behind the sea
+    if (prevSky && skyFade < 1) { drawSky(sky, sk0); drawSky(prevSky, (1 - skyFade) * sk0); } else drawSky(sky, sk0);
+    A.Scene.stage('ground', E);
     // wet ground sheen / snow cover
     if (S.rain > 0.05) { const wg = ctx.createLinearGradient(0, yH, 0, H); wg.addColorStop(0, rgb(pal.hor, 0.18 * S.rain)); wg.addColorStop(1, rgb(pal.hor, 0)); ctx.fillStyle = wg; ctx.fillRect(0, yH, W, H - yH); }
     if (S.snow > 0.2) { const wg = ctx.createLinearGradient(0, yH, 0, H); wg.addColorStop(0, `rgba(235,242,250,${0.5 * S.snow})`); wg.addColorStop(1, `rgba(225,235,248,${0.2 * S.snow})`); ctx.fillStyle = wg; ctx.fillRect(0, yH, W, H - yH); }
@@ -294,6 +303,7 @@
       for (let i = 0; i < n; i++) { const o = i * 4, z = snow[o + 2]; snow[o + 1] += (28 + 70 * z) * dt * (reduced ? 0.3 : 1); snow[o] += (vx * (0.3 + z) + Math.sin(t * (0.5 + z) + snow[o + 3]) * 16 * z) * dt; if (snow[o + 1] > yH + (H - yH) * z + 10) seedSnow(i, false); if (snow[o] > W + 20) snow[o] = -20; else if (snow[o] < -20) snow[o] = W + 20; const sz = 3 + z * 11; ctx.globalAlpha = (0.35 + 0.65 * z) * clamp(S.snow + 0.3, 0, 1); ctx.drawImage(flake, snow[o] - sz / 2, snow[o + 1] - sz / 2, sz, sz); }
       ctx.globalAlpha = 1;
     }
+    A.Scene.stage('fx', E);
     // lightning bolt (drawn on top)
     if (bolt && f > 0.02) {
       ctx.lineCap = 'round'; ctx.lineJoin = 'round';

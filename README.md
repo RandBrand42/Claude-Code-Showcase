@@ -243,8 +243,8 @@ anti-aliasing and tiled 4096-pixel export. About 1,700 lines.
 through dawn, day, golden hour, dusk and night, with drifting clouds, rain, snow, fog and lightning, and a sun and
 moon that travel across it. Drag the scrubber along the bottom and the next 48 hours play out: the sky, the
 temperature and the forecast all morph together. 18 cities (Texas, California, Washington, Florida, North
-Carolina, Japan) now show **real** forecasts, alerts and local news and video; the other 7 are marked DEMO and
-are invented. It is a design showcase and not an official warning service.
+Carolina, Japan) now show **real** forecasts, alerts and local news and video, with a background that turns into a beach day, a
+smoky haze, an extreme-UV glare or a thunderstorm to match; the other 7 are marked DEMO and are invented. It is a design showcase and not an official warning service.
 
 **Try this first.** Drag the bottom time bar. Press `C` to cycle cities, `D` for the scene panel (force a
 thunderstorm or snow), and `Space` for a time-lapse of a full day.
