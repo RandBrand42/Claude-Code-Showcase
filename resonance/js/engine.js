@@ -305,7 +305,7 @@
    * ===================================================================== */
   function applyMaster() {
     const t = now();
-    N.master.gain.setTargetAtTime(Math.pow(P.vol, 2) * 1.25, t, 0.02);
+    N.master.gain.setTargetAtTime(Math.pow(P.vol, 2) * 1.25 * Math.pow(10, P.trim / 20), t, 0.02);
     const a = P.comp, thr = -6 - a * 22, ratio = 1.3 + a * 4.2;
     N.comp.threshold.setTargetAtTime(thr, t, 0.05);
     N.comp.ratio.setTargetAtTime(ratio, t, 0.05);
@@ -384,7 +384,7 @@
   R.on('param', (id) => {
     if (!ctx) return;
     if (VOICE_IDS.has(id)) { for (const v of voices) refreshVoice(v); return; }
-    if (id === 'vol' || id === 'comp') applyMaster();
+    if (id === 'vol' || id === 'comp' || id === 'trim') applyMaster();
     else if (id === 'pump') return;
     else if (id === 'fxDrive' || id === 'fxDriveMix') applyDrive();
     else if (id.startsWith('ch')) applyChorus();

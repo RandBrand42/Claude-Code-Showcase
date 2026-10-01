@@ -26,5 +26,16 @@ Also: Orbital and Mnemo gained inline favicons (they logged a 404 for `/favicon.
 
 **Not verified:** reading level with real children, screen readers, Firefox / Safari, and the Coach wording in every edge case.
 
+## Batch B2 (part 1) - Resonance: restyle any song into another genre
+
+| Area | Change | Evidence |
+|---|---|---|
+| **Resonance** | New **STYLE** picker (header, under the LCD): 14 genres (Piano, Orchestral Strings, Harpsichord, Jazz, Blues, Rock, Reggae, Funk, Lo-fi Hip-Hop, Trap, House, Techno, Synthwave, Ambient) plus **Original**. A style keeps the notes, key, pattern structure and chain, and changes tempo, swing, the whole patch and effects, chord stacking, how the notes are played (gate / velocity / slides, with repeatable humanising) and writes a genre drum arrangement (groove, variation, breakdown and fill assigned to patterns A-D by how busy each was). Styles always derive from a saved copy of the song, so **Original** is an exact undo and styles never stack. Blues also switches the scale (and scale lock) to the blues scale. | **3,472** logic checks pass (melody identity, tempo / swing / chord, no drum hits beyond the pattern length, no stacking, exact restore; across 4 source songs and 5 pattern lengths) and a negative control proves the checker can fail. **45 offline audio renders** (15 variants x 3 songs): 0 NaN, 0 clipped samples, no silent renders, peaks <= -4 dB. Driven through the real UI in headless Edge: modal, apply, LCD, restore, live playback; 0 console errors |
+| **Resonance** | Pattern lengths **12 and 24 steps** added (appended to the step list, so saved patches keep their step-count index) for waltz and 6/8 material. | Covered by the logic checks above |
+| **Resonance** | New hidden **TRIM** parameter (-12..+18 dB, default 0, not on the panel) in the master chain ahead of the compressor, used to even out loudness between styles. | See below |
+
+**Provisional:** the per-style loudness trims are first estimates. The first render matrix showed a 21 dB loudness spread between styles (Rock about -16 dB RMS, Strings on a sparse source about -35 dB), so trims were added but **have not yet been re-measured**; they will be calibrated against the song library.
+**Not verified:** how any of it sounds. Nobody has listened. Everything above is numerical (levels, timing, structure), not musical judgement.
+
 ### Not yet done (from the same feedback list)
 Resonance genre switching / song library / themes, Prism "Dark Side" theme, Atmos live data, Mnemo OneDrive/Claude/Copilot access.

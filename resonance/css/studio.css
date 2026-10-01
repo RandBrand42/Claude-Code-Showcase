@@ -1,0 +1,39 @@
+/* RESONANCE - studio.css : the STYLE / SONGS / THEME pickers.
+   Uses the panel's own tokens, so a theme skin recolours these too. */
+
+.patchbtns.studio { margin-top: -2px; }
+.patchbtns.studio .btn.on { box-shadow: inset 0 0 0 1px var(--amber), 0 0 10px rgba(255, 178, 62, 0.25); color: var(--amber-hot); }
+
+.modal-card.studio header { align-items: flex-start; }
+.modal-card.studio .msub { margin: 3px 0 0; font-size: 12.5px; color: var(--ink-3); line-height: 1.45; max-width: 60ch; }
+.modal-card.studio .mbody { display: grid; gap: 12px; }
+
+/* tiles */
+.tilegrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(206px, 1fr)); gap: 8px; }
+.tile {
+  position: relative; display: grid; grid-template-rows: auto auto 1fr auto auto; gap: 3px; text-align: left; min-height: 142px; padding: 10px 11px 9px;
+  border: 0; border-radius: 11px; background: #121418; color: var(--ink); cursor: pointer;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05); transition: background var(--dur-1), box-shadow var(--dur-1), transform var(--dur-1);
+}
+.tile:hover { background: #1a1d22; transform: translateY(-1px); }
+.tile:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+.tile.cur { background: #1d1c18; box-shadow: inset 0 0 0 1px var(--amber), 0 0 16px rgba(255, 178, 62, 0.16); }
+.tile .tt { font-family: var(--font-display); font-stretch: 75%; letter-spacing: 0.17em; font-size: 9px; color: var(--cyan); }
+.tile .tn { font-size: 15px; font-weight: 600; letter-spacing: 0.01em; }
+.tile .td { font-size: 12px; line-height: 1.4; color: var(--ink-2); }
+.tile .tm { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-3); }
+
+/* mini groove strip */
+.groove { display: grid; gap: 2px; margin-top: 4px; }
+.groove.none { font-family: var(--font-display); font-stretch: 75%; letter-spacing: 0.14em; font-size: 9px; color: var(--ink-3); text-transform: uppercase; min-height: 17px; }
+.grow { display: grid; grid-template-columns: repeat(16, 1fr); gap: 2px; height: 4px; }
+.grow i { background: rgba(255, 255, 255, 0.07); border-radius: 1px; }
+.grow i.h, .grow i.g { background: var(--ink-2); }
+.grow i.g { opacity: 0.45; }
+.grow.k i.h, .grow.k i.g { background: var(--amber); }
+.grow.s i.h, .grow.s i.g { background: var(--cyan); }
+
+.optrow { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--ink-2); cursor: pointer; }
+.optrow input { accent-color: var(--amber); width: 16px; height: 16px; }
+
+@media (max-width: 700px) { .tilegrid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); } .tile { min-height: 128px; } }

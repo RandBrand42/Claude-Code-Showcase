@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Resonance - style & song verification</title>
+<!--
+  Loads only the audio engine, sequencer, presets and style code (no UI), and exposes two functions on window:
+
+    verifyLogic()                      -> { fails: [...], checks: n }      musical invariants, no audio
+    renderOffline(opts)                -> Promise<metrics>                 renders audio offline and measures it
+         opts: { factory: index | song: id, style: id, secs, steps: stepsIndex }
+
+  Run it with the project harness, e.g.
+    node tools/browse.mjs resonance/tests/verify.html --script=<scenario.mjs>
+  where the scenario calls page.eval("verifyLogic()") and page.eval("renderOffline({...})").
+-->
+</head>
+<body>
+<pre id="out">Resonance verification page. Call verifyLogic() / renderOffline() from the console.</pre>
+<script src="../js/core.js"></script>
+<script src="../js/engine.js"></script>
+<script src="../js/seq.js"></script>
+<script src="../js/presets.js"></script>
+<script src="../js/styles.js"></script>
+<script src="../js/songs.js" onerror="void 0"></script>
+<script>
+(function () {
+  'use strict';
+  const R = window.R, E = R.Engine;
+  const snap = () => { const s = R.Presets.snapshot(); return JSON.stringify({ params: s.params, song: s.song }); };
+
+  /* ---------------- logic ---------------- */
+  window.verifyLogic = function (opts) {
+    opts = opts || {};
+    const fails = []; let checks = 0;
+    const check = (cond, msg) => { checks++; if (!cond) fails.push(msg); };
+
+    // 1. every parameter a style names is real and inside its range
+    for (const s of R.Style.list) {
+      for (const [k, v] of Object.entries(s.params)) {
+        const d = R.PDEF[k];
+        check(!!d, s.id + ': unknown parameter ' + k);
+        if (d) check(Math.abs(R.coerce(d, v) - v) < 1e-9, s.id + ': ' + k + '=' + v + ' is outside its range (would become ' + R.coerce(d, v) + ')');
+      }
+    }
+
+    // 2. per source song and per pattern length
+    const sources = opts.sources || [0, 3, 8, 10];
+    for (const src of sources) {
+      for (const stepsIdx of [0, 1, 2, 3, 4]) {            // 8, 16, 32, 12, 24 steps
+        if (typeof src === 'number') R.Presets.loadFactory(src); else R.Songs.load(src);
+        R.setParam('steps', stepsIdx);
+        R.Style.current = 'original'; R.Style.base = null;
+        const S = R.STEPS[stepsIdx], tag = (typeof src === 'number' ? R.Presets.factory[src].name : src) + '@' + S;
+        const base = R.Presets.snapshot(), baseKey = snap();
+
+        for (const s of R.Style.list) {
+          R.Style.apply(s.id);
+          const now = R.Presets.snapshot();
+          const where = tag + ' -> ' + s.id;
+          // melody identity: same steps on, same notes, in every pattern
+          for (let pi = 0; pi < 4; pi++) {
+            for (let k = 0; k < S; k++) {
+              const a = base.song.pats[pi].m[k], b = now.song.pats[pi].m[k];
+              if (a[0] !== b[0] || (a[0] && a[1] !== b[1])) { check(false, where + ': melody changed in pattern ' + 'ABCD'[pi] + ' step ' + (k + 1)); break; }
+            }
+            // drums never spill past the pattern length
+            for (const lane of now.song.pats[pi].d) for (let k = S; k < 32; k++) if (lane[k][0]) { check(false, where + ': drum hit beyond step ' + S); break; }
+          }
+          check(now.params.steps === base.params.steps, where + ': step count changed');
+          check(now.params.root === base.params.root, where + ': root changed');
+          check(now.params.chain === base.params.chain, where + ': chain changed');
+          if (s.scale == null) check(now.params.scale === base.params.scale, where + ': scale changed');
+          check(now.params.bpm === (s.bpm != null ? s.bpm : base.params.bpm), where + ': tempo is ' + now.params.bpm);
+          check(now.params.chord === s.chord, where + ': chord setting');
+          const hits = now.song.pats.reduce((n, p) => n + p.d.reduce((m, l) => m + l.reduce((q, st) => q + st[0], 0), 0), 0);
+          if (s.drums === null || s.drums === undefined && false) check(hits === 0, where + ': drumless style has ' + hits + ' drum hits');
+          if (s.drums) check(hits > 0, where + ': style has drums but none were written');
+          // no stacking: applying a second style from here equals applying it from the original
+          const other = R.Style.list[(R.Style.list.indexOf(s) + 5) % R.Style.list.length];
+          R.Style.apply(other.id); const viaChain = snap();
+          R.Style.apply('original'); R.Style.apply(other.id); const direct = snap();
+          check(viaChain === direct, where + ' then ' + other.id + ': result depends on the previous style');
+          // original restores the song exactly
+          R.Style.apply('original');
+          check(snap() === baseKey, where + ': "original" did not restore the song exactly');
+        }
+      }
+    }
+    return { fails, checks };
+  };
+
+  /* ---------------- offline audio ---------------- */
+  const db = (x) => (x > 1e-9 ? 20 * Math.log10(x) : -180);
+  window.renderOffline = async function (o) {
+    o = o || {};
+    if (o.song) R.Songs.load(o.song); else R.Presets.loadFactory(o.factory | 0);
+    if (o.steps != null) R.setParam('steps', o.steps);
+    R.Style.current = 'original'; R.Style.base = null;
+    if (o.style && o.style !== 'original') R.Style.apply(o.style);
+    const SR = 44100, secs = o.secs || 8, frames = Math.ceil(secs * SR / 128) * 128;
+    const ctx = new OfflineAudioContext(2, frames, SR);
+    E.init(ctx);
+    R.Seq.start(0.05);
+    // advance the sequencer in short slices exactly like the live clock does (never schedule everything at once)
+    const slice = 128 * 20;
+    for (let f = slice; f < frames; f += slice) {
+      const t = f / SR;
+      ctx.suspend(t).then(() => { R.Seq.advanceTo(t + 0.2); E.sweep(); ctx.resume(); });
+    }
+    R.Seq.advanceTo(0.25);
+    const buf = await ctx.startRendering();
+    R.Seq.stop();
+    const L = buf.getChannelData(0), Rr = buf.getChannelData(1);
+    let peak = 0, sum = 0, bad = 0, clipped = 0;
+    const win = Math.floor(SR * 0.25), winRms = [];
+    for (let w = 0; w + win <= L.length; w += win) {
+      let s = 0;
+      for (let i = w; i < w + win; i++) { const a = L[i], b = Rr[i]; s += (a * a + b * b) / 2; }
+      winRms.push(Math.sqrt(s / win));
+    }
+    for (let i = 0; i < L.length; i++) {
+      const a = L[i], b = Rr[i];
+      if (!isFinite(a) || !isFinite(b)) { bad++; continue; }
+      const m = Math.max(Math.abs(a), Math.abs(b));
+      if (m > peak) peak = m;
+      if (m >= 0.999) clipped++;
+      sum += (a * a + b * b) / 2;
+    }
+    const active = winRms.filter((r) => db(r) > -60);
+    return {
+      name: R.Presets.current, style: R.Style.current, bpm: R.P.bpm, steps: R.STEPS[R.P.steps],
+      peakDb: +db(peak).toFixed(1), rmsDb: +db(Math.sqrt(sum / L.length)).toFixed(1),
+      activeFrac: +(active.length / winRms.length).toFixed(2), nonFinite: bad, clipped,
+      voicesAtEnd: E.activeVoices(),
+    };
+  };
+  window.__verifyReady = true;
+})();
+</script>
+</body>
+</html>

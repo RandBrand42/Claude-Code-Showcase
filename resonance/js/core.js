@@ -64,7 +64,7 @@
     { l: '1/4', b: 1 }, { l: '1/8', b: 0.5 }, { l: '1/8T', b: 1 / 3 },
     { l: '1/16', b: 0.25 }, { l: '1/16T', b: 1 / 6 }, { l: '1/32', b: 0.125 },
   ];
-  R.STEPS = [8, 16, 32];
+  R.STEPS = [8, 16, 32, 12, 24];   // 12 / 24 are appended (not sorted) so saved patches keep their step-count index
   R.CHORDS = ['OFF', '5TH', 'TRIAD', '7TH', 'SUS2', 'SUS4', 'OCT'];
   R.CHAINS = [
     { n: 'OFF', seq: null }, { n: 'A B', seq: [0, 1] }, { n: 'A B C', seq: [0, 1, 2] },
@@ -152,6 +152,7 @@
   F('vol', 'MASTER', 0, 1, 0.8, { unit: 'pct' });
   F('comp', 'GLUE', 0, 1, 0.4, { unit: 'pct' });
   F('pump', 'PUMP', 0, 1, 0, { unit: 'pct' });
+  F('trim', 'TRIM', -12, 18, 0, { unit: 'db' });   // loudness makeup before the glue compressor / limiter; used by styles, not shown on the panel
 
   F('drumLevel', 'DRUMS', 0, 1, 0.85, { unit: 'pct' });
   F('drumRev', 'REV SEND', 0, 1, 0.15, { unit: 'pct' });
@@ -226,6 +227,7 @@
       case 'bip': return (v > 0 ? '+' : '') + Math.round(v * 100) + ' %';
       case 'bpm': return v + ' BPM';
       case 'x': return v.toFixed(2) + 'x';
+      case 'db': return (v > 0 ? '+' : '') + v.toFixed(1) + ' dB';
       default: return d.type === 'i' ? String(v) : v.toFixed(2);
     }
   };
