@@ -44,6 +44,48 @@ RESONANCE is a showcase of what a single folder of plain HTML, CSS and JavaScrip
 
 ![Full panel](screenshots/panel-full.png)
 
+## Style, Songs and Look (added in the second round)
+
+![Style picker](screenshots/style-picker.png)
+
+**STYLE** (header, under the LCD) restyles the song that is playing into another genre while keeping its makeup: the same notes, key and pattern
+structure. Fourteen genres: Piano, Orchestral Strings, Harpsichord, Jazz, Blues, Rock, Reggae, Funk, Lo-fi Hip-Hop, Trap, House, Techno, Synthwave
+and Ambient. A style swaps the sound patch, tempo, swing and drum kit, writes a genre-appropriate groove for every pattern (groove, variation, break
+and a fill on the last bar), and adjusts how the melody is played (velocity, note length, slides, a touch of deterministic humanising). Blues also
+locks the melody to the blues scale. **Original** always brings the song back exactly as it was loaded.
+
+![Song library](screenshots/songs.png)
+
+**SONGS** is a library of 12 public-domain tunes: Ode to Joy, Canon in D, Fur Elise, Eine kleine Nachtmusik, In the Hall of the Mountain King,
+Gymnopedie No. 1, Minuet in G, Auld Lang Syne, Amazing Grace, Scarborough Fair, Greensleeves and Jingle Bells. Each is an excerpt of up to 8 bars that
+loops, written as a one-voice transcription and played by this app's own synthesis. **Only the compositions are public domain**: no recording and no
+modern arrangement is used, because those are separate works with their own copyright. Each tile carries a badge: *Checked against a published score*
+means an automated test compared every note and length with a public-domain score; *From memory* means it was not (Minuet in G, Greensleeves and Jingle Bells are the three such tunes).
+Pick a song, then press STYLE to hear it as jazz, techno or anything else.
+
+![A song restyled](screenshots/jazz-restyle.png)
+
+![Panel looks](screenshots/themes.png)
+
+**LOOK** changes the panel's skin: Studio Graphite (the original), Grand Piano, Concert Hall, Jazz Club, Tube Amp, Drum Kit and Neon Synthwave. The
+choice is remembered on the device. By default a style also suggests a look (Jazz gets the Jazz Club, Synthwave gets Neon Synthwave); untick "Match the
+panel look to the style" in the STYLE picker to switch that off. Going back to Original returns to the look you picked yourself.
+
+Smaller changes: pattern lengths of **12 and 24 steps** were added for waltz and 6/8 material (appended to the step list so saved patches keep working),
+and a hidden **TRIM** level (not shown on the panel) evens out loudness between styles.
+
+**What was verified for this round.** 8,472 automated logic checks across all 12 songs, 14 styles and 5 pattern lengths (notes stay in range and in key,
+nothing is lost on restore, bar lengths are correct), with 0 failures, plus a negative control to prove the checks can fail. 45 offline renders
+(3 songs, 15 variants): none produced NaN or clipping, every style ended within about 2.5 dB of the target loudness (-20.5 dBFS RMS) except Reggae
+(about -23 dB, limited by its peak level), and peaks stayed at or below about -3.3 dBFS. The UI was driven in a headless browser: opening the pickers, loading
+a song, restyling it, the LCD text and the look changing, with no console errors.
+
+**What was NOT verified.** Nobody has listened to any of it. Whether a style sounds like its genre, and whether a song's tempo and feel are right, is a
+matter of ear. Real mouse clicks on the new buttons were tested; touch was not. Minuet in G, Greensleeves and Jingle Bells are from memory. Several well-known tunes were left out on
+purpose: Moonlight Sonata, The Planets, The Four Seasons (long and multi-voice, and a one-voice excerpt would not do them justice), the ragtime and
+early jazz titles (their identity is the stride-piano left hand, which this single-voice format cannot honestly carry), and recordings of any kind. If
+you can supply a public-domain score or MIDI file for a tune you want, it can be added and checked the same way.
+
 ## Run it
 
 Double-click `index.html`. No install, no server. Click **Power on** (browsers require a gesture before audio can start), or *Power on and play the demo loop*. Optional: `python -m http.server` in this folder.

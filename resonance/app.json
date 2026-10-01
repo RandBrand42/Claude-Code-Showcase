@@ -5,6 +5,6 @@
   "order": 40,
   "feature": true,
   "tagline": "Polyphonic synth, drum machine & sequencer",
-  "description": "A boutique-hardware-style studio with 8-voice synthesis, procedural reverb, synthesized drums, a lookahead sequencer, arpeggiator and live oscilloscope + spectrum.",
+  "description": "A boutique-hardware-style studio with 8-voice synthesis, procedural reverb, synthesized drums, a lookahead sequencer, a one-press genre restyler, a public-domain song library and instrument-themed skins.",
   "tech": ["Web Audio", "DSP", "Sequencer", "WAV export"]
 }

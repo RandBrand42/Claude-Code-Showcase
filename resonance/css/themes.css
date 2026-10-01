@@ -1,0 +1,111 @@
+/* RESONANCE - themes.css : panel skins.
+ * Each skin is selected by <html data-theme="...">; Studio Graphite (the original) has no attribute and none of these rules apply.
+ * A skin recolours the big surfaces (page, chassis, side cheeks, LCD, module wells) and the accent tokens that colour LEDs,
+ * knob arcs and lit steps. The canvas visualisers draw with fixed colours, so a skin retints them with a CSS filter. */
+
+/* ---------------------------------------------------------------- Grand Piano: black lacquer, ivory ---------------------------------------------------------------- */
+html[data-theme="piano"] {
+  --bg: #000; --amber: #f1e3bd; --amber-hot: #fff6dc; --amber-dim: #5b523c; --cyan: #c9dbec; --cyan-dim: #2e3a45;
+  --ink: #f5f2ea; --ink-2: #bdbab0; --ink-3: #807d74;
+}
+html[data-theme="piano"] body { background: radial-gradient(120% 70% at 50% -10%, #1d1d21 0%, rgba(29, 29, 33, 0) 60%), radial-gradient(90% 60% at 50% 110%, #0d0c0a 0%, rgba(13, 12, 10, 0) 70%), #000; }
+html[data-theme="piano"] .chassis {
+  background: linear-gradient(172deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0) 18%), linear-gradient(180deg, #202125 0%, #131417 26%, #0a0a0c 62%, #121317 100%);
+  background-blend-mode: normal;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), inset 0 0 0 1px rgba(0, 0, 0, 0.9), inset 0 -40px 60px -40px rgba(0, 0, 0, 0.7), 0 24px 50px rgba(0, 0, 0, 0.7);
+}
+html[data-theme="piano"] .cheek { background: linear-gradient(90deg, #08080a 0%, #2c2d33 42%, #0a0a0c 100%); box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.8), inset 2px 0 0 rgba(255, 255, 255, 0.12), 0 14px 34px rgba(0, 0, 0, 0.7); }
+html[data-theme="piano"] .mod { background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0) 24%), linear-gradient(180deg, #17181c 0%, #0c0d0f 100%); }
+html[data-theme="piano"] .lcd { background: radial-gradient(130% 150% at 25% 0%, #26221a 0%, #100e0a 55%, #060504 100%); }
+html[data-theme="piano"] .glass canvas { filter: grayscale(0.8) sepia(0.4) brightness(1.05); }
+html[data-theme="piano"] .brand h1 { color: #fff9ea; }
+
+/* ---------------------------------------------------------------- Concert Hall: burgundy velvet, gold ---------------------------------------------------------------- */
+html[data-theme="hall"] {
+  --bg: #0b0306; --amber: #e8bf66; --amber-hot: #ffe2a3; --amber-dim: #6e5320; --cyan: #f0b8a6; --cyan-dim: #5a2c28;
+  --ink: #f7ece4; --ink-2: #cdb4a8; --ink-3: #8f7468;
+}
+html[data-theme="hall"] body { background: radial-gradient(120% 70% at 50% -10%, #4a1420 0%, rgba(74, 20, 32, 0) 62%), radial-gradient(90% 60% at 50% 110%, #1d0a05 0%, rgba(29, 10, 5, 0) 70%), #0b0306; }
+html[data-theme="hall"] .chassis {
+  background: var(--grain) 0 0 / 160px 700px, linear-gradient(180deg, #62202d 0%, #4a1520 32%, #340d16 66%, #28090f 100%);
+  background-blend-mode: soft-light, normal;
+  box-shadow: inset 0 1px 0 rgba(255, 214, 190, 0.2), inset 0 0 0 1px rgba(0, 0, 0, 0.8), inset 0 -40px 60px -40px rgba(0, 0, 0, 0.6), 0 24px 50px rgba(0, 0, 0, 0.65);
+}
+html[data-theme="hall"] .cheek { background: var(--grain), linear-gradient(180deg, #7b5a22 0%, #4e3512 40%, #6a4a1a 70%, #3a280d 100%); }
+html[data-theme="hall"] .mod { background: linear-gradient(180deg, rgba(255, 220, 190, 0.05), rgba(255, 255, 255, 0) 26%), linear-gradient(180deg, #2c0f16 0%, #1f080d 100%); }
+html[data-theme="hall"] .lcd { background: radial-gradient(130% 150% at 25% 0%, #33210b 0%, #170e05 52%, #090502 100%); }
+html[data-theme="hall"] .screw { background: radial-gradient(circle at 35% 30%, #f1d58a, #a2762a 55%, #3a280d); }
+html[data-theme="hall"] .glass canvas { filter: sepia(0.55) saturate(1.1) hue-rotate(-12deg); }
+
+/* ---------------------------------------------------------------- Jazz Club: midnight blue, neon amber and teal ---------------------------------------------------------------- */
+html[data-theme="jazz"] {
+  --bg: #04070d; --amber: #ffb347; --amber-hot: #ffd58f; --amber-dim: #6b4510; --cyan: #3ee0c6; --cyan-dim: #0e4f48;
+}
+html[data-theme="jazz"] body { background: radial-gradient(120% 70% at 50% -10%, #14263f 0%, rgba(20, 38, 63, 0) 62%), radial-gradient(90% 60% at 50% 110%, #1b0f0a 0%, rgba(27, 15, 10, 0) 70%), #04070d; }
+html[data-theme="jazz"] .chassis {
+  background: var(--grain) 0 0 / 160px 700px, linear-gradient(180deg, #1f3250 0%, #16243b 34%, #0e182b 70%, #0a111f 100%);
+  background-blend-mode: soft-light, normal;
+}
+html[data-theme="jazz"] .cheek { background: var(--grain), repeating-linear-gradient(90.5deg, rgba(255, 190, 120, 0.05) 0 3px, rgba(0, 0, 0, 0) 3px 9px), linear-gradient(180deg, #43301f 0%, #2a1c11 50%, #3a2819 100%); }
+html[data-theme="jazz"] .mod { background: linear-gradient(180deg, rgba(150, 190, 255, 0.05), rgba(255, 255, 255, 0) 26%), linear-gradient(180deg, #111e33 0%, #0b1423 100%); }
+html[data-theme="jazz"] .brand h1 { text-shadow: 0 0 14px rgba(255, 179, 71, 0.45), 0 1px 0 #000; }
+
+/* ---------------------------------------------------------------- Tube Amp: black tolex, gold, red pilot lamp ---------------------------------------------------------------- */
+html[data-theme="amp"] {
+  --bg: #060504; --amber: #f2c14e; --amber-hot: #ffe08a; --amber-dim: #6a5214; --cyan: #ff5a3c; --cyan-dim: #5a1f15;
+  --ink: #f2e9d6; --ink-2: #c4b8a0; --ink-3: #857b68;
+}
+html[data-theme="amp"] body { background: radial-gradient(120% 70% at 50% -10%, #231c14 0%, rgba(35, 28, 20, 0) 60%), #060504; }
+html[data-theme="amp"] .chassis {
+  background: var(--grain) 0 0 / 160px 700px, var(--brushed) 0 0 / 512px 512px, linear-gradient(180deg, #202020 0%, #151515 40%, #0e0e0e 100%);
+  background-blend-mode: soft-light, soft-light, normal;
+  box-shadow: inset 0 3px 0 #b8902f, inset 0 4px 0 rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(0, 0, 0, 0.85), 0 24px 50px rgba(0, 0, 0, 0.7);
+}
+html[data-theme="amp"] .cheek { background: linear-gradient(90deg, #6b6e73 0%, #dcdfe3 42%, #5a5d62 100%); box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.5), inset 2px 0 0 rgba(255, 255, 255, 0.4), 0 14px 34px rgba(0, 0, 0, 0.6); }
+html[data-theme="amp"] .cheek::after { background: linear-gradient(90deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0) 30%, rgba(0, 0, 0, 0.3)); }
+html[data-theme="amp"] .mod { background: linear-gradient(180deg, rgba(255, 240, 200, 0.05), rgba(255, 255, 255, 0) 26%), linear-gradient(180deg, #1f1e1b 0%, #131210 100%); }
+html[data-theme="amp"] .lcd { background: radial-gradient(130% 150% at 25% 0%, #3a2808 0%, #1a1103 52%, #0a0701 100%); }
+html[data-theme="amp"] .glass canvas { filter: sepia(0.9) saturate(1.5) hue-rotate(-14deg); }
+
+/* ---------------------------------------------------------------- Drum Kit: red sparkle lacquer, chrome ---------------------------------------------------------------- */
+html[data-theme="kit"] {
+  --bg: #0a0304; --amber: #ff7a59; --amber-hot: #ffb29c; --amber-dim: #6a2a1c; --cyan: #e8eef6; --cyan-dim: #3c4650;
+  --ink: #fbeeee; --ink-2: #d2b8b8; --ink-3: #957b7b;
+}
+html[data-theme="kit"] body { background: radial-gradient(120% 70% at 50% -10%, #3a0d12 0%, rgba(58, 13, 18, 0) 62%), #0a0304; }
+html[data-theme="kit"] .chassis {
+  background:
+    radial-gradient(circle at 14% 22%, rgba(255, 255, 255, 0.22) 0 1px, transparent 1.5px) 0 0 / 38px 41px,
+    radial-gradient(circle at 63% 71%, rgba(255, 210, 200, 0.18) 0 1px, transparent 1.5px) 0 0 / 53px 47px,
+    linear-gradient(180deg, #a1202b 0%, #7b141d 36%, #560d14 70%, #3d0910 100%);
+  background-blend-mode: normal;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), inset 0 0 0 1px rgba(0, 0, 0, 0.8), inset 0 -40px 60px -40px rgba(0, 0, 0, 0.55), 0 24px 50px rgba(0, 0, 0, 0.65);
+}
+html[data-theme="kit"] .cheek { background: linear-gradient(90deg, #7d838b 0%, #f4f7fa 42%, #6d737b 100%); box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.45), inset 2px 0 0 rgba(255, 255, 255, 0.5), 0 14px 34px rgba(0, 0, 0, 0.6); }
+html[data-theme="kit"] .cheek::after { background: linear-gradient(90deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0) 30%, rgba(0, 0, 0, 0.25)); }
+html[data-theme="kit"] .mod { background: linear-gradient(180deg, rgba(255, 200, 200, 0.05), rgba(255, 255, 255, 0) 26%), linear-gradient(180deg, #2c0c10 0%, #1d070a 100%); }
+html[data-theme="kit"] .lcd { background: radial-gradient(130% 150% at 25% 0%, #2c0c10 0%, #130406 52%, #080203 100%); }
+html[data-theme="kit"] .glass canvas { filter: hue-rotate(150deg) saturate(1.2); }
+
+/* ---------------------------------------------------------------- Neon Synthwave: ultraviolet, magenta and cyan ---------------------------------------------------------------- */
+html[data-theme="synthwave"] {
+  --bg: #050212; --amber: #ff4fd8; --amber-hot: #ff9bea; --amber-dim: #5a1650; --cyan: #3de8ff; --cyan-dim: #0d4a56;
+  --ink: #f1e9ff; --ink-2: #c3b3e0; --ink-3: #8573a8;
+}
+html[data-theme="synthwave"] body { background: radial-gradient(120% 70% at 50% -10%, #3a0f66 0%, rgba(58, 15, 102, 0) 62%), radial-gradient(90% 60% at 50% 115%, #5a0c4a 0%, rgba(90, 12, 74, 0) 66%), #050212; }
+html[data-theme="synthwave"] .chassis {
+  background: linear-gradient(rgba(255, 79, 216, 0.05) 1px, transparent 1px) 0 0 / 100% 28px, linear-gradient(180deg, #2a0f4a 0%, #1a0933 38%, #0f0522 72%, #090318 100%);
+  background-blend-mode: normal;
+  box-shadow: inset 0 1px 0 rgba(255, 130, 230, 0.35), inset 0 0 0 1px rgba(0, 0, 0, 0.85), 0 0 40px rgba(255, 79, 216, 0.18), 0 24px 50px rgba(0, 0, 0, 0.7);
+}
+html[data-theme="synthwave"] .cheek { background: linear-gradient(180deg, #ff2fb9 0%, #8b2cff 52%, #00cfff 100%); box-shadow: 0 0 22px rgba(255, 47, 185, 0.5), inset 0 0 18px rgba(0, 0, 0, 0.35); }
+html[data-theme="synthwave"] .cheek::after { background: linear-gradient(90deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0) 40%, rgba(0, 0, 0, 0.25)); }
+html[data-theme="synthwave"] .mod { background: linear-gradient(180deg, rgba(255, 120, 230, 0.06), rgba(255, 255, 255, 0) 26%), linear-gradient(180deg, #170a2e 0%, #0e0620 100%); }
+html[data-theme="synthwave"] .lcd { background: radial-gradient(130% 150% at 25% 0%, #240a45 0%, #0f0426 52%, #050112 100%); }
+html[data-theme="synthwave"] .brand h1 { text-shadow: 0 0 16px rgba(255, 79, 216, 0.7), 0 1px 0 #000; }
+html[data-theme="synthwave"] .screw { background: radial-gradient(circle at 35% 30%, #d9a8ff, #6a2cc0 55%, #1a0933); }
+
+/* smooth skin changes (not for reduced motion) */
+@media (prefers-reduced-motion: no-preference) {
+  .chassis, .cheek, .mod, .lcd { transition: background 400ms var(--ease), box-shadow 400ms var(--ease); }
+}

@@ -12,11 +12,11 @@ window.SHOWCASE_REGISTRY = {
     ],
     [
       "source files",
-      99
+      106
     ],
     [
       "lines of code",
-      24593
+      25630
     ],
     [
       "runtime dependencies",
@@ -89,7 +89,7 @@ window.SHOWCASE_REGISTRY = {
       "name": "Resonance",
       "kind": "Audio",
       "tagline": "Polyphonic synth, drum machine & sequencer",
-      "description": "A boutique-hardware-style studio with 8-voice synthesis, procedural reverb, synthesized drums, a lookahead sequencer, arpeggiator and live oscilloscope + spectrum.",
+      "description": "A boutique-hardware-style studio with 8-voice synthesis, procedural reverb, synthesized drums, a lookahead sequencer, a one-press genre restyler, a public-domain song library and instrument-themed skins.",
       "tech": [
         "Web Audio",
         "DSP",
@@ -101,8 +101,8 @@ window.SHOWCASE_REGISTRY = {
       "feature": true,
       "image": "assets/thumbs/resonance.webp",
       "readme": true,
-      "files": 13,
-      "lines": 4187
+      "files": 20,
+      "lines": 5224
     },
     {
       "id": "orbital",

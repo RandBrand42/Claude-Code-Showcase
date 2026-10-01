@@ -135,6 +135,106 @@
       voicesAtEnd: E.activeVoices(),
     };
   };
+
+  /* ---------------- songs: compare with published public-domain scores ---------------- */
+  // A tiny reader for the LilyPond snippets that Wikipedia embeds for public-domain tunes (relative or absolute pitch,
+  // durations, dots, ties, rests). Enough to turn those snippets into [{ midi, d }] where d is in sixteenth-note steps.
+  function lily(text, start, abs) {
+    const SEMIS = [0, 2, 4, 5, 7, 9, 11], LET = { c: 0, d: 1, e: 2, f: 3, g: 4, a: 5, b: 6 };
+    const clean = text.replace(/%[^\n]*/g, ' ').replace(/[()\[\]|]/g, ' ');
+    let prev = 0;
+    if (!abs) { const m = /^([a-g])([',]*)$/.exec(start); prev = ((m[2].split("'").length - 1) - (m[2].split(',').length - 1)) * 7 + LET[m[1]]; }
+    let dur = 4, dots = 0, lastMidi = null, tie = false;
+    const out = [];
+    const stepsOf = (n, dt) => (16 / n) * (dt === 1 ? 1.5 : dt === 2 ? 1.75 : 1);
+    for (let tok of clean.split(/\s+/).filter(Boolean)) {
+      let tied = false;
+      if (tok.endsWith('~')) { tied = true; tok = tok.slice(0, -1); }
+      let m;
+      if ((m = /^r(\d+)?(\.*)$/.exec(tok))) { if (m[1]) { dur = +m[1]; dots = m[2].length; } out.push({ midi: null, d: stepsOf(dur, dots) }); continue; }
+      if ((m = /^(\d+)(\.*)$/.exec(tok))) { dur = +m[1]; dots = m[2].length; out.push({ midi: lastMidi, d: stepsOf(dur, dots) }); continue; }
+      m = /^([a-g])(is|es)?([',]*)(\d+)?(\.*)$/.exec(tok);
+      if (!m) throw new Error('lily token not understood: ' + tok);
+      const L = LET[m[1]], acc = m[2] === 'is' ? 1 : m[2] === 'es' ? -1 : 0;
+      const up = m[3].split("'").length - 1, down = m[3].split(',').length - 1;
+      let o;
+      if (abs) o = up - down;
+      else { let best = null; for (let o0 = -3; o0 <= 6; o0++) { const dd = Math.abs(o0 * 7 + L - prev); if (best == null || dd < best[0]) best = [dd, o0]; } o = best[1] + up - down; }
+      prev = o * 7 + L;
+      if (m[4]) { dur = +m[4]; dots = m[5].length; }
+      const midi = 48 + 12 * o + SEMIS[L] + acc;
+      const d = stepsOf(dur, dots);
+      if (tie && out.length && out[out.length - 1].midi === midi) out[out.length - 1].d += d; else out.push({ midi, d });
+      lastMidi = midi; tie = tied;
+    }
+    return out;
+  }
+  const notesOnly = (ev) => ev.filter((e) => e.midi != null);
+
+  /* Reference snippets are from the public-domain scores embedded in the Wikipedia articles for each piece (checked 2026-10). */
+  const REFS = {
+    ode: [{ src: "b' b c d | d c b a | g g a b | b4. a8 a2 | b4 b c d | d c b a | g g a b | a4. g8 g2", start: "c'" }],
+    canon: [{ src: "fis4 e d cis | b a b cis | d cis b a | g fis g e | d8 fis a g fis d fis e | d b d a' g b a g | fis8 d e cis' d fis a a, | b g a fis d d' d8. cis16", start: "c''" }],
+    elise: [{ src: "e''16 dis'' | e'' dis'' e'' b' d'' c'' | a'8 r16 c' e' a' | b'8 r16 e' gis' b' | c''8 r16 e' e'' dis'' | e'' dis'' e'' b' d'' c''", abs: true, skipRef: 2 }],
+    kleine: [{ src: "g4 r8 d8 g4 r8 d8 | g8 d g b d4 r4 | c4 r8 a8 c4 r8 a8 | c8 a fis a d,4 r4", start: "c'''" }],
+    mountain: [
+      { src: "b,8 cis d e fis d fis4 | eis8 cis eis4 e8 c e4 | b8 cis d e fis d fis b | a fis d fis a4 r4", start: 'd', intervals: true },
+      /* The published snippet writes bar 3 as 'fis, gis ais ...' with no duration, so LilyPond carries over the previous quarter-note
+        and the bar would be 7 beats long in 4/4. Bar 1 has the identical figure in eighths, so the duration is restored here. */
+      { src: "fis8 gis ais b cis ais cis4 | d8 ais d4 cis8 ais cis4 | fis,8 gis ais b cis ais cis4 | d8 ais d4 cis4 r4", start: 'c', intervals: true },
+    ],
+    gymnopedie: [{ src: "r4 fis4 a g | fis cis b | cis d a2.", start: "c''" }],
+    auldlangsyne: [{ src: "f4. f8 f4 a4 | g4. f8 g4 a4 | f4. f8 a4 c4 | d2. d4 | c4. a8 a4 f4 | g4. f8 g4 a4 | f4. d8 d4 c4 | f2.", start: "c'" }],
+    grace: [{ src: "g2 b8 g8 | b2 a4 | g2 e4 | d2 d4 | g2 b8 g8 | b2 a4 | g2.", start: "d'" }],
+    scarborough: [{ src: "d2 4 | a'8 a4. a4 | e4. f8 e4 | d2. | r4 a' c4 | d2 c4 | a b g | a2 d4", start: "c'" }],
+  };
+
+  window.verifySongs = function () {
+    const fails = [], report = [];
+    for (const song of R.Songs.list) {
+      const ev = R.Songs.parse(song.text), mine = notesOnly(ev);
+      const total = ev.reduce((n, e) => n + e.d, 0), want = song.S * (song.chain === 3 ? 4 : 2);
+      const where = song.id;
+      if (total !== want) fails.push(where + ': ' + total + ' steps written but ' + want + ' expected for ' + song.S + ' steps x ' + (song.chain === 3 ? 4 : 2) + ' patterns');
+      const pitches = mine.map((e) => e.midi);
+      if (Math.min(...pitches) < 36 || Math.max(...pitches) > 96) fails.push(where + ': notes outside a playable range');
+      // how much of the tune is inside its declared key (chromatic notes are legitimate in Fur Elise / Mountain King)
+      const iv = R.SCALES[song.scale].iv, inKey = mine.filter((e) => iv.indexOf((((e.midi - song.root) % 12) + 12) % 12) >= 0).length / mine.length;
+      if (inKey < 0.6) fails.push(where + ': only ' + Math.round(inKey * 100) + '% of notes are in the declared key');
+      // the compiled sequencer strings must round-trip to the same notes
+      const comp = R.Songs.compile(song);
+      let roundTrip = 0;
+      comp.patterns.forEach((p) => { roundTrip += p.split(/\s+/).filter((t) => t !== '.').length; });
+      if (roundTrip !== mine.length) fails.push(where + ': ' + mine.length + ' notes written but ' + roundTrip + ' in the sequencer patterns');
+
+      let status = song.verified === 'score' ? 'score' : 'memory';
+      if (song.verified === 'score') {
+        const refs = REFS[song.id];
+        if (!refs) { fails.push(where + ': marked as score-checked but has no reference'); status = 'NO REFERENCE'; }
+        else {
+          let at = 0, compared = 0;
+          for (const r of refs) {
+            let ref = notesOnly(lily(r.src, r.start, r.abs));
+            if (r.skipRef) ref = ref.slice(r.skipRef);
+            const seg = mine.slice(at, at + ref.length);
+            for (let i = 0; i < ref.length; i++) {
+              const a = ref[i], b = seg[i];
+              if (!b) { fails.push(where + ': song is shorter than its reference (note ' + (i + 1) + ')'); break; }
+              if (a.d !== b.d) { fails.push(where + ': note ' + (at + i + 1) + ' length ' + b.d + ' but the score says ' + a.d); break; }
+              if (r.intervals) {
+                if (i === 0 ? ((a.midi % 12) !== (b.midi % 12)) : ((a.midi - ref[i - 1].midi) !== (b.midi - seg[i - 1].midi))) { fails.push(where + ': note ' + (at + i + 1) + ' differs in pitch from the score (interval check)'); break; }
+              } else if (a.midi !== b.midi) { fails.push(where + ': note ' + (at + i + 1) + ' is ' + b.midi + ' but the score says ' + a.midi); break; }
+            }
+            at += ref.length; compared += ref.length;
+          }
+          status = 'score (' + compared + ' notes compared)';
+        }
+      }
+      report.push(song.id.padEnd(13) + String(mine.length).padStart(3) + ' notes  ' + String(total).padStart(3) + ' steps  in-key ' + String(Math.round(inKey * 100)).padStart(3) + '%  ' + status);
+    }
+    return { fails, report };
+  };
+
   window.__verifyReady = true;
 })();
 </script>

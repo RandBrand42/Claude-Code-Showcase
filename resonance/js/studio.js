@@ -79,9 +79,9 @@
     styleTiles.forEach((b, id) => { b.classList.toggle('cur', id === R.Style.current); b.setAttribute('aria-pressed', id === R.Style.current); });
     const s = R.Style.byId[R.Style.current];
     const tag = $('#lcdTag');
-    if (s && tag) tag.textContent = s.tag;
+    if (tag) { if (s) tag.textContent = s.tag; else if (R.Songs && R.Songs.current) tag.textContent = R.Songs.byId[R.Songs.current].category.toUpperCase().slice(0, 12); }
     const btn = $('#btnStyle');
-    if (btn) { btn.classList.toggle('on', !!s); $('span', btn).textContent = s ? s.name.toUpperCase().slice(0, 9) : 'STYLE'; }
+    if (btn) { btn.classList.toggle('on', !!s); $('span', btn).textContent = s ? s.tag.toUpperCase().slice(0, 10) : 'STYLE'; }
   }
   R.on('style', paintStyle);
   // the app resets the LCD tag to the patch tag on every load; put the style tag back afterwards
@@ -89,5 +89,74 @@
   buildStyleTiles();
   $('#btnStyle').addEventListener('click', () => { paintStyle(); styleModal.open(); });
 
-  R.studio = { styleModal, makeModal, modals };
+  /* =====================================================================================
+   *  SONGS library
+   * ===================================================================================== */
+  const songModal = makeModal('modalSongs', 'Song library', 'Public-domain tunes played by the synthesizer. Load one, then press STYLE to hear it as another genre.');
+  const songTiles = new Map();
+  function buildSongs() {
+    const body = songModal.body;
+    body.textContent = '';
+    for (const cat of ['Classical', 'Folk & traditional', 'Seasonal']) {
+      const list = R.Songs.list.filter((s) => s.category === cat);
+      if (!list.length) continue;
+      const h = el('h3', '', ''); h.textContent = cat;
+      const grid = el('div', 'tilegrid', '');
+      for (const s of list) {
+        const b = el('button', 'tile song', '<span class="tt"></span><span class="tn"></span><span class="td"></span><span class="tm"></span><span class="tb"></span>');
+        b.type = 'button'; b.dataset.id = s.id;
+        $('.tt', b).textContent = s.meter + '  -  ' + s.year;
+        $('.tn', b).textContent = s.title;
+        $('.td', b).textContent = s.composer;
+        $('.tm', b).textContent = s.note + '  -  ' + s.bpm + ' BPM';
+        const tb = $('.tb', b);
+        if (s.verified === 'score') { tb.textContent = 'Checked against a published score'; tb.classList.add('ok'); tb.title = 'Every note and length was compared with a public-domain score by an automated test'; }
+        else { tb.textContent = 'From memory - not independently checked'; tb.classList.add('mem'); tb.title = 'Written from memory; a musician should listen and correct any wrong note'; }
+        b.addEventListener('click', () => {
+          if (!R.app.powered) { ui.toast('Power on first'); return; }
+          R.Songs.load(s.id);
+          if (!R.Seq.playing) R.Seq.start();
+          ui.toast(s.title + ' - press STYLE to restyle it');
+        });
+        songTiles.set(s.id, b); grid.appendChild(b);
+      }
+      body.append(h, grid);
+    }
+    body.appendChild(el('p', 'fineprint', 'The compositions are in the public domain. What you hear is this app’s own synthesis of a simple one-voice transcription: no recording and no modern arrangement is used. A tune is an excerpt (up to 8 bars) that loops.'));
+    paintSongs();
+  }
+  function paintSongs() { songTiles.forEach((b, id) => { b.classList.toggle('cur', id === R.Songs.current); b.setAttribute('aria-pressed', id === R.Songs.current); }); }
+  R.on('song', () => { paintSongs(); paintStyle(); });
+  buildSongs();
+  $('#btnSongs').addEventListener('click', () => { paintSongs(); songModal.open(); });
+
+  /* =====================================================================================
+   *  THEME picker
+   * ===================================================================================== */
+  const themeModal = makeModal('modalTheme', 'Panel look', 'Dress the instrument as a piano, a concert hall, a jazz club and more. Your choice is remembered on this device.');
+  const themeTiles = new Map();
+  function buildThemes() {
+    const body = themeModal.body;
+    body.textContent = '';
+    const grid = el('div', 'tilegrid', '');
+    for (const t of R.Theme.list) {
+      const b = el('button', 'tile theme', '<span class="swatch"><i style="background:' + t.pv.chassis + '"></i><i style="background:' + t.pv.cheek + '"></i><i style="background:' + t.pv.lcd + '"></i><i style="background:' + t.pv.a + '"></i><i style="background:' + t.pv.b + '"></i></span><span class="tn"></span><span class="td"></span>');
+      b.type = 'button'; $('.tn', b).textContent = t.name; $('.td', b).textContent = t.desc;
+      b.addEventListener('click', () => {
+        R.Theme.set(t.id);
+        paintThemes();
+        ui.toast('Look: ' + t.name);
+      });
+      themeTiles.set(t.id, b); grid.appendChild(b);
+    }
+    body.appendChild(grid);
+    body.appendChild(el('p', 'fineprint', 'With "Match the panel look to the style" ticked in the STYLE picker, restyling a song also changes the look; pick one here to keep it.'));
+    paintThemes();
+  }
+  function paintThemes() { themeTiles.forEach((b, id) => { b.classList.toggle('cur', id === R.Theme.current); b.setAttribute('aria-pressed', id === R.Theme.current); }); }
+  R.on('theme', paintThemes);
+  buildThemes();
+  $('#btnTheme').addEventListener('click', () => { paintThemes(); themeModal.open(); });
+
+  R.studio = { styleModal, songModal, themeModal, makeModal, modals };
 })();

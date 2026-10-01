@@ -37,5 +37,18 @@ Also: Orbital and Mnemo gained inline favicons (they logged a 404 for `/favicon.
 **Provisional:** the per-style loudness trims are first estimates. The first render matrix showed a 21 dB loudness spread between styles (Rock about -16 dB RMS, Strings on a sparse source about -35 dB), so trims were added but **have not yet been re-measured**; they will be calibrated against the song library.
 **Not verified:** how any of it sounds. Nobody has listened. Everything above is numerical (levels, timing, structure), not musical judgement.
 
+## Batch B2 (part 2) - Resonance: song library, panel looks and loudness calibration
+
+| Area | Change | Evidence |
+|---|---|---|
+| **Resonance** | New **SONGS** library: 12 public-domain tunes, each a loop of up to 8 bars, with a badge saying whether it was checked against a published score. Compositions only; no recordings or modern arrangements. | Nine of twelve compared note-by-note against public-domain scores with a small LilyPond reader (`verifySongs`), 0 failures |
+| **Resonance** | New **LOOK** picker: 7 panel skins (Studio Graphite, Grand Piano, Concert Hall, Jazz Club, Tube Amp, Drum Kit, Neon Synthwave). Remembered per device. A style can suggest its own look (optional). | Each skin screenshotted at 1440 wide; Concert Hall on a phone viewport; no console errors |
+| **Resonance** | Per-style **loudness trims** calibrated from 75 offline renders, then re-checked with 45 more. | Mean RMS within about 1 dB of -20.5 dBFS for all styles except Reggae (-23, peak-limited); peaks at or below -3.3 dBFS; 0 NaN, 0 clipped |
+| **Resonance** | Active STYLE button now shows the genre tag (`JAZZ`, `80s`) with readable colours. | Screenshot |
+
+**Not verified:** how any of it sounds; touch input; Minuet in G, Greensleeves and Jingle Bells (from memory, flagged in the UI); reading of the skins by users with colour-vision differences. During testing the first synthetic click after power-on was occasionally swallowed by the headless harness; a scripted click and later real clicks behave correctly, and it was not reproduced as an app bug.
+
+**Left out on purpose:** Moonlight Sonata, The Planets, The Four Seasons, ragtime and early-jazz titles, and anything that is a recording. Reasons are in the Resonance README. A score or MIDI file for any further tune would let it be added and checked.
+
 ### Not yet done (from the same feedback list)
-Resonance genre switching / song library / themes, Prism "Dark Side" theme, Atmos live data, Mnemo OneDrive/Claude/Copilot access.
+Prism "Dark Side" homage mode, Atmos live data, alerts and news/video feeds, Mnemo OneDrive/Claude/Copilot access.
