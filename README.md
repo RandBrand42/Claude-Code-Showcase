@@ -202,7 +202,8 @@ propagation clustering, and a hand-written ZIP exporter. About 3,500 lines.
 **The pitch.** A minimalist puzzle game about light. Rotate mirrors, split beams, mix red, green and blue into yellow,
 cyan and white, and send light through portals to wake every crystal. Twenty-four handcrafted levels in four
 chapters teach one idea at a time; a daily puzzle and endless mode generate fresh boards; a sandbox lets you build
-and share your own with a copy-paste code. Beams glow and bloom against dark glass.
+and share your own with a copy-paste code. Beams glow and bloom against dark glass, or switch to the monochrome "Dark Side look"
+for hard white light and a six-band spectrum.
 
 **Try this first.** Click **Play**, open level 1, and click the mirror once. Then try the Daily.
 
@@ -342,7 +343,7 @@ Every app folder follows the same shape: `index.html`, `css/`, `js/`, `screensho
 | Resonance | `Space` play / stop, `1`-`4` patterns, `A W S E D F T G Y H U J K` play notes, `?` help; STYLE / SONGS / LOOK buttons under the LCD |
 | Orbital | `Space` pause, `R` reverse, `1`-`0` scenes, `?` help |
 | Mnemo | `Ctrl+O` switcher, `Ctrl+G` graph, `Ctrl+E` mode, `?` help |
-| Prism | click / tap rotates, `H` hint, `Ctrl+Z` undo, `?` help |
+| Prism | click / tap rotates, `H` hint, `Ctrl+Z` undo, `?` help; "Dark Side look" button on the title and pause menu |
 | Infinitum | `T` tour, `P` palette, `J` Julia, `?` help |
 | Atmos | `C` city, `D` scenes, `Space` time-lapse, `?` help |
 | Meridian | `g` then `o/r/g/f/p/l` navigates, `T` theme, `Ctrl+K` palette, `?` help |

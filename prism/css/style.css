@@ -113,3 +113,15 @@ body.sandbox .slot { width: 46px; height: 46px; border-radius: 10px; } body.sand
   #toast { bottom: 150px; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; } }
+
+/* Dark Side look: pure black, monochrome chrome, light as the only colour. An original homage to prism-and-spectrum imagery. */
+.dsbtn { margin-top: 18px; align-self: flex-start; }
+body.darkside { --bg: #000; --glass: rgba(255,255,255,.03); --line: rgba(255,255,255,.14); --line2: rgba(255,255,255,.3); --accent: #fff; --accent2: #fff; --dim: #8d8d92; }
+body.darkside h1 { font-weight: 100; letter-spacing: .02em; }
+body.darkside .eyebrow { letter-spacing: .4em; }
+body.darkside .dsbtn { color: var(--text); border-color: var(--line2); }
+body.darkside .ghostp { filter: drop-shadow(0 0 10px rgba(255,255,255,.5)); }
+body.darkside button.accent { background: #fff; color: #000; border-color: transparent; box-shadow: 0 0 22px rgba(255,255,255,.25); }
+body.darkside .slot.sel { background: rgba(255,255,255,.08); box-shadow: 0 0 24px rgba(255,255,255,.2); }
+body.darkside .node.done circle.c { fill: #1a1a1a; }
+body.darkside .starrow svg.on { filter: drop-shadow(0 0 10px rgba(255,255,255,.6)); }

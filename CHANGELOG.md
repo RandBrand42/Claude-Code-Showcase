@@ -50,5 +50,13 @@ Also: Orbital and Mnemo gained inline favicons (they logged a 404 for `/favicon.
 
 **Left out on purpose:** Moonlight Sonata, The Planets, The Four Seasons, ragtime and early-jazz titles, and anything that is a recording. Reasons are in the Resonance README. A score or MIDI file for any further tune would let it be added and checked.
 
+## Batch B3 - Prism: Dark Side look
+
+| Area | Change | Evidence |
+|---|---|---|
+| **Prism** | New optional **Dark Side look** (title screen button and pause menu, remembered): pure black board, hard thin beams, a six-band spectrum title scene, white accents. An original homage to the white-light-into-a-prism image: no band name, album title, logo or artwork. | Toggled from both places; title and levels 1, 13, 21 screenshotted; 0 console errors; 41 tracer tests pass |
+
+**Not verified:** contrast ratios of the white accents, other browsers, touch. **Brand note:** the imagery is deliberately generic; legal / brand review is advised if it leaves internal demo use.
+
 ### Not yet done (from the same feedback list)
-Prism "Dark Side" homage mode, Atmos live data, alerts and news/video feeds, Mnemo OneDrive/Claude/Copilot access.
+Atmos live data, alerts and news/video feeds, Mnemo OneDrive/Claude/Copilot access.

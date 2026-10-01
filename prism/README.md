@@ -26,6 +26,25 @@ A flagship showcase of a game built with zero dependencies: a linear, per-channe
 
 Also in the code: **Daily puzzle** (seeded by the local date), **Endless** (random seeds, difficulty ramps), **Sandbox** with base64 share codes (Export/Import), Hint (runs the solver and highlights one correct action), undo/redo, reset, pause menu, par-based stars (3 at par, 2 within +3, otherwise 1), progress saved in `localStorage` inside `try/catch`, a constellation level map, a looping title scene (white light through a prism), synthesized audio (rising pentatonic chimes per crystal, a low hum, a remembered mute) and `prefers-reduced-motion` support.
 
+## Dark Side look (optional)
+
+![Dark Side look: title](screenshots/dark-side.png)
+
+A second visual look, switched on from the title screen (**Dark Side look: on / off**) or the pause menu, and remembered on the device. It changes the
+presentation only; levels, scoring and the solver are untouched. Everything goes to pure black and monochrome: the title shows one thin white beam
+meeting a crisp triangle and leaving it as a six-band spectrum (red, orange, yellow, green, blue, violet). In play, the board is black with a white
+outline, beams are hard thin lines with a tight coloured halo instead of a soft bloom, and the magenta accents become white.
+
+![Dark Side look: a level](screenshots/dark-side-level.png)
+
+This is an original homage to the classic "white light into a prism, spectrum out" image, which is a physics diagram as much as anything else. It uses
+**no band name, album title, logo, typeface or artwork**, and it is not affiliated with or endorsed by any musician or label. If the project is ever
+used beyond an internal demonstration, have the visual identity reviewed by whoever owns brand and legal for it.
+
+**Verified:** toggling from the title and the pause menu, persistence in storage, title and three levels (including a prism level and the 8x8 board)
+screenshotted, 0 console errors, 41 tracer tests still pass. **Not verified:** colour-contrast measurement of the white accents, other browsers, and
+touch. The "Ambience hum" is unrelated and still off by default.
+
 ## Run it
 
 Double-click `index.html`. Optional: `python -m http.server` in this folder.

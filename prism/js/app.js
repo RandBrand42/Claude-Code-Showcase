@@ -7,7 +7,7 @@
   const TAU = Math.PI * 2;
 
   /* ------------------------------------------------------------ persistence */
-  const save = { stars: {}, best: {}, mute: false, daily: {}, hum: false };
+  const save = { stars: {}, best: {}, mute: false, daily: {}, hum: false, ds: false };
   try { Object.assign(save, JSON.parse(localStorage.getItem('prism.v1') || '{}')); } catch (e) { /* storage unavailable */ }
   const persist = () => { try { localStorage.setItem('prism.v1', JSON.stringify(save)); } catch (e) { /* ignore */ } };
 
@@ -45,6 +45,12 @@
   // The low drone is optional ambience (off by default): it swells with the number of lit crystals.
   let humN = 0;
   const setHum = n => { humN = n; if (AC && humG) humG.gain.setTargetAtTime(save.hum ? Math.min(0.12, 0.015 + 0.02 * n) : 0, AC.currentTime, 0.4); };
+  const SPEC = [[255, 40, 40], [255, 150, 30], [255, 232, 40], [60, 220, 90], [50, 130, 255], [150, 70, 255]];
+  const setDarkSide = on => {
+    save.ds = !!on; persist(); document.body.classList.toggle('darkside', save.ds);
+    ['#dsState', '#dsState2'].forEach(q => { const e = $(q); if (e) e.textContent = save.ds ? 'on' : 'off'; });
+    $$('.dsbtn').forEach(b => b.setAttribute('aria-pressed', save.ds));
+  };
   const setAmbience = on => { save.hum = on; persist(); const s = $('#humState'); if (s) s.textContent = on ? 'on' : 'off'; setHum(humN); };
   function setMute(m) {
     save.mute = m; persist(); document.body.classList.toggle('muted', m); $('#sndState').textContent = m ? 'off' : 'on';
@@ -157,6 +163,14 @@
     ctx.strokeStyle = rgba(c, .28 * a); ctx.lineWidth = w; ctx.stroke();
     ctx.strokeStyle = rgba(mix(c, .55), .85 * a); ctx.lineWidth = w * 0.4; ctx.stroke();
     ctx.strokeStyle = rgba([255, 255, 255], .9 * a); ctx.lineWidth = w * 0.15; ctx.stroke();
+  }
+
+  /* Dark Side look: a hard, thin line with a tight coloured halo, so white light stays white and every colour reads as pure spectrum */
+  function crispLine(ctx, x0, y0, x1, y1, c, s, inten) {
+    ctx.lineCap = 'butt';
+    ctx.strokeStyle = rgba(c, .22 * (0.4 + 0.6 * inten)); ctx.lineWidth = s * 0.1; ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
+    ctx.strokeStyle = rgba(c, 0.55 + 0.45 * inten); ctx.lineWidth = Math.max(1.5, s * 0.035); ctx.stroke();
+    ctx.strokeStyle = rgba([255, 255, 255], 0.35 + 0.5 * inten); ctx.lineWidth = Math.max(1, s * 0.012); ctx.stroke();
   }
 
   /* ------------------------------------------------------------- game state */
@@ -387,9 +401,9 @@
     // board
     const bx = V.ox, by = V.oy, bw = s * G.w, bh = s * G.h;
     rrect(ctx, bx - 8, by - 8, bw + 16, bh + 16, 18);
-    const bgG = ctx.createLinearGradient(0, by, 0, by + bh); bgG.addColorStop(0, '#0d0d13'); bgG.addColorStop(1, '#08080c');
-    ctx.fillStyle = bgG; ctx.fill(); ctx.strokeStyle = 'rgba(255,255,255,.11)'; ctx.lineWidth = 1; ctx.stroke();
-    ctx.strokeStyle = 'rgba(255,255,255,.045)'; ctx.beginPath();
+    const bgG = ctx.createLinearGradient(0, by, 0, by + bh); if (save.ds) { bgG.addColorStop(0, '#000'); bgG.addColorStop(1, '#000'); } else { bgG.addColorStop(0, '#0d0d13'); bgG.addColorStop(1, '#08080c'); }
+    ctx.fillStyle = bgG; ctx.fill(); ctx.strokeStyle = save.ds ? 'rgba(255,255,255,.55)' : 'rgba(255,255,255,.11)'; ctx.lineWidth = 1; ctx.stroke();
+    ctx.strokeStyle = save.ds ? 'rgba(255,255,255,.02)' : 'rgba(255,255,255,.045)'; ctx.beginPath();
     for (let x = 1; x < G.w; x++) { ctx.moveTo(bx + x * s + .5, by); ctx.lineTo(bx + x * s + .5, by + bh); }
     for (let y = 1; y < G.h; y++) { ctx.moveTo(bx, by + y * s + .5); ctx.lineTo(bx + bw, by + y * s + .5); }
     ctx.stroke(); ctx.fillStyle = 'rgba(255,255,255,.1)';
@@ -403,7 +417,7 @@
         const c = [Math.min(255, r.r * PRIM[0][0] + r.g * PRIM[1][0] + r.b * PRIM[2][0]), Math.min(255, r.r * PRIM[0][1] + r.g * PRIM[1][1] + r.b * PRIM[2][1]), Math.min(255, r.r * PRIM[0][2] + r.g * PRIM[1][2] + r.b * PRIM[2][2])];
         const mxc = Math.max(c[0], c[1], c[2], 1), cc = [c[0] / mxc * 255, c[1] / mxc * 255, c[2] / mxc * 255];
         const inten = Math.min(1, Math.max(r.r, r.g, r.b)), x0 = bx + r.x0 * s, y0 = by + r.y0 * s, x1 = bx + r.x1 * s, y1 = by + r.y1 * s;
-        lc.globalCompositeOperation = 'lighter'; glowLine(lc, x0, y0, x1, y1, cc, s * 0.2 * (0.55 + 0.45 * inten), 0.35 + 0.65 * inten);
+        lc.globalCompositeOperation = 'lighter'; if (save.ds) crispLine(lc, x0, y0, x1, y1, cc, s, inten); else glowLine(lc, x0, y0, x1, y1, cc, s * 0.2 * (0.55 + 0.45 * inten), 0.35 + 0.65 * inten);
         const L = Math.hypot(x1 - x0, y1 - y0); len += L;
         if (!RM) { // energy pulses travelling along the beam
           lc.setLineDash([s * 0.12, s * 0.88]); lc.lineDashOffset = -t * s * 1.6 + r.d * 7; lc.strokeStyle = 'rgba(255,255,255,.75)'; lc.lineWidth = s * 0.05; lc.lineCap = 'butt';
@@ -442,8 +456,8 @@
     V.sctx.setTransform(1, 0, 0, 1, 0, 0); V.sctx.clearRect(0, 0, V.sm.width, V.sm.height); V.sctx.imageSmoothingQuality = 'high';
     V.sctx.drawImage(V.lay, 0, 0, V.sm.width, V.sm.height);
     ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalCompositeOperation = 'lighter';
-    ctx.drawImage(V.lay, 0, 0); ctx.globalAlpha = 0.9; ctx.drawImage(V.sm, 0, 0, V.cv.width, V.cv.height);
-    ctx.globalAlpha = 0.5; ctx.drawImage(V.sm, -V.cv.width * .01, -V.cv.height * .01, V.cv.width * 1.02, V.cv.height * 1.02);
+    ctx.drawImage(V.lay, 0, 0); ctx.globalAlpha = save.ds ? 0.35 : 0.9; ctx.drawImage(V.sm, 0, 0, V.cv.width, V.cv.height);
+    ctx.globalAlpha = save.ds ? 0.18 : 0.5; ctx.drawImage(V.sm, -V.cv.width * .01, -V.cv.height * .01, V.cv.width * 1.02, V.cv.height * 1.02);
     ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over'; ctx.setTransform(d, 0, 0, d, 0, 0);
     // particles
     ctx.globalCompositeOperation = 'lighter';
@@ -459,7 +473,7 @@
     // cursor, hover preview, hint
     const cur = G.cur, [ccx, ccy] = center(cur.x, cur.y), h = s * 0.46;
     if (document.activeElement === V.cv || V.hover) {
-      ctx.strokeStyle = 'rgba(224,139,255,.9)'; ctx.lineWidth = 2; const l = s * 0.16;
+      ctx.strokeStyle = save.ds ? 'rgba(255,255,255,.9)' : 'rgba(224,139,255,.9)'; ctx.lineWidth = 2; const l = s * 0.16;
       [[-1, -1], [1, -1], [1, 1], [-1, 1]].forEach(([sx, sy]) => { ctx.beginPath(); ctx.moveTo(ccx + sx * h, ccy + sy * (h - l)); ctx.lineTo(ccx + sx * h, ccy + sy * h); ctx.lineTo(ccx + sx * (h - l), ccy + sy * h); ctx.stroke(); });
     }
     const pv = V.hover && !G.cells[V.hover.y * G.w + V.hover.x] ? (trayDown.ghost || G.sel >= 0 ? G.tray[G.sel] : G.mode === 'sandbox' && G.tool >= 0 && G.tool != null ? C.parseToken(tokenFix(PALETTE[G.tool])).p : null) : null;
@@ -467,13 +481,14 @@
     if (hv) {
       const [hx, hy] = center(hv.x, hv.y), k = (Math.sin(t * 5) + 1) / 2;
       if (hv.piece) drawPiece(ctx, hv.piece, hx, hy, s, angleOf(hv.piece), { a: 0.35 + 0.3 * k, t });
-      ctx.strokeStyle = 'rgba(224,139,255,' + (0.5 + 0.5 * k) + ')'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(hx, hy, s * (0.46 + 0.08 * k), 0, TAU); ctx.stroke();
+      ctx.strokeStyle = (save.ds ? 'rgba(255,255,255,' : 'rgba(224,139,255,') + (0.5 + 0.5 * k) + ')'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(hx, hy, s * (0.46 + 0.08 * k), 0, TAU); ctx.stroke();
     }
   }
 
   /* title background: white light enters a prism and fans into R, G, B, forever */
   function drawTitle(t) {
     const c = bg.cv, x = bg.ctx, W = c.width, H = c.height, u = Math.min(W, H) / 900 * (W < H ? 1.6 : 1);
+    if (save.ds) return drawTitleDS(t);
     x.globalCompositeOperation = 'source-over'; x.fillStyle = '#07070a'; x.fillRect(0, 0, W, H);
     const gr = x.createRadialGradient(W * .7, H * .5, 0, W * .7, H * .5, Math.max(W, H) * .7); gr.addColorStop(0, 'rgba(120,60,200,.16)'); gr.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = gr; x.fillRect(0, 0, W, H);
     const px = W * (W < H ? .5 : .68), py = H * (W < H ? .72 : .5), sway = RM ? 0 : Math.sin(t * .5) * .05;
@@ -490,6 +505,30 @@
     // a few drifting motes
     x.globalCompositeOperation = 'lighter';
     for (let k = 0; k < 40; k++) { const fx = (Math.sin(k * 12.9 + t * .05 * (1 + k % 3)) * .5 + .5), fy = (Math.sin(k * 7.3 + t * .07) * .5 + .5); x.fillStyle = 'rgba(255,255,255,' + (0.1 + (k % 5) * .04) + ')'; x.fillRect(fx * W, fy * H, 2, 2); }
+  }
+
+  /* Dark Side title: black field, one white beam, a crisp triangle, and a six-band spectrum fanning out the far side */
+  function drawTitleDS(t) {
+    const c = bg.cv, x = bg.ctx, W = c.width, H = c.height, u = Math.min(W, H) / 900 * (W < H ? 1.6 : 1);
+    x.globalCompositeOperation = 'source-over'; x.fillStyle = '#000'; x.fillRect(0, 0, W, H);
+    const px = W * (W < H ? .5 : .68), py = H * (W < H ? .72 : .5), sway = RM ? 0 : Math.sin(t * .5) * .012, side = 110 * u;
+    const hit = [px - side * 0.5, py - side * 0.05];
+    x.globalCompositeOperation = 'lighter';
+    x.lineCap = 'butt'; x.strokeStyle = 'rgba(255,255,255,.12)'; x.lineWidth = 9 * u; x.beginPath(); x.moveTo(-20, hit[1] + 120 * u + Math.sin(t * .4) * 4 * u); x.lineTo(hit[0], hit[1]); x.stroke();
+    x.strokeStyle = 'rgba(255,255,255,.95)'; x.lineWidth = Math.max(1.5, 3 * u); x.stroke();
+    const out = [px + side * 0.12, py - side * 0.05];
+    SPEC.forEach((col, k) => {
+      const ang = (-0.26 + k * 0.105) + sway * (k - 2.5), len = Math.max(W, H) * 1.3;
+      const ex = out[0] + Math.cos(ang) * len, ey = out[1] + Math.sin(ang) * len;
+      x.strokeStyle = rgba(col, .16); x.lineWidth = 11 * u; x.beginPath(); x.moveTo(out[0], out[1]); x.lineTo(ex, ey); x.stroke();
+      x.strokeStyle = rgba(col, .95); x.lineWidth = Math.max(1.5, 4 * u); x.stroke();
+    });
+    x.globalCompositeOperation = 'source-over';
+    x.beginPath(); x.moveTo(px, py - side * 0.95); x.lineTo(px - side * 0.82, py + side * 0.5); x.lineTo(px + side * 0.82, py + side * 0.5); x.closePath();
+    x.fillStyle = 'rgba(255,255,255,.04)'; x.fill();
+    x.strokeStyle = 'rgba(255,255,255,.92)'; x.lineWidth = Math.max(1.5, 2.2 * u); x.lineJoin = 'miter'; x.stroke();
+    x.globalCompositeOperation = 'lighter';
+    for (let k = 0; k < 26; k++) { const fx = (Math.sin(k * 12.9 + 3) * .5 + .5), fy = (Math.sin(k * 7.3 + 1) * .5 + .5), tw = RM ? 1 : 0.6 + 0.4 * Math.sin(t * (.5 + k % 4 * .2) + k); x.fillStyle = 'rgba(255,255,255,' + (0.18 * tw) + ')'; x.fillRect(fx * W, fy * H, 1.5, 1.5); }
   }
 
   function frame(ts) {
@@ -592,7 +631,7 @@
       return;
     }
     switch (b.dataset.act) {
-      case 'mute': setMute(!save.mute); break; case 'ambience': setAmbience(!save.hum); break; case 'undo': undo(); break; case 'redo': redo(); break; case 'hint': hint(); break;
+      case 'mute': setMute(!save.mute); break; case 'darkside': setDarkSide(!save.ds); break; case 'ambience': setAmbience(!save.hum); break; case 'undo': undo(); break; case 'redo': redo(); break; case 'hint': hint(); break;
       case 'reset': reset(); break; case 'back': go(G && G.mode === 'level' ? 'map' : 'title'); break; case 'pause': openOv('#pause'); break;
       case 'resume': closeOverlays(); break; case 'help': openOv('#help'); break; case 'closehelp': closeOverlays(); break;
       case 'next': next(); break; case 'replay': reset(); break; case 'export': exportCode(); break; case 'import': importCode(); break;
@@ -604,7 +643,7 @@
   window.addEventListener('resize', resize);
   document.addEventListener('visibilitychange', () => { if (AC) document.hidden ? AC.suspend() : AC.resume(); });
   document.body.classList.toggle('muted', save.mute); $('#sndState').textContent = save.mute ? 'off' : 'on'; $('#humState').textContent = save.hum ? 'on' : 'off';
-  resize(); titleMeta(); requestAnimationFrame(frame);
+  setDarkSide(save.ds); resize(); titleMeta(); requestAnimationFrame(frame);
   // test hooks (used by tests/ui-play.mjs)
   window.PrismDebug = { state: () => G, res: () => res, cellXY: (x, y) => { const r = V.cv.getBoundingClientRect(), c = center(x, y); return [r.left + c[0], r.top + c[1]]; }, play: playLevel, daily: playDaily, sandbox: playSandbox, save, screen: () => screen };
 })();

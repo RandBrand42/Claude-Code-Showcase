@@ -23,6 +23,7 @@
         <button data-go="endless"><b>Endless</b><span>Generated, forever</span></button>
         <button data-go="sandbox"><b>Sandbox</b><span>Build and share</span></button>
       </nav>
+      <button class="ghost dsbtn" data-act="darkside" aria-pressed="false">Dark Side look: <span id="dsState">off</span></button>
       <p class="foot">Click or tap to turn. Drag pieces from the tray. Arrow keys and Space work too. <kbd>?</kbd> for help.</p>
     </div>
     <button class="icon snd" data-act="mute" aria-label="Toggle sound"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9z"/><path class="w" d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/></svg></button>
@@ -57,7 +58,7 @@
 
 <div id="pause" class="overlay" role="dialog" aria-label="Paused"><div class="card">
   <p class="eyebrow">Paused</p><h2>Take a breath</h2>
-  <div class="col"><button data-act="resume" class="accent">Resume</button><button data-act="reset">Restart level</button><button data-go="map">Level map</button><button data-act="mute">Sound: <span id="sndState">on</span></button><button data-act="ambience">Ambience hum: <span id="humState">off</span></button><button data-act="help">Controls</button></div>
+  <div class="col"><button data-act="resume" class="accent">Resume</button><button data-act="reset">Restart level</button><button data-go="map">Level map</button><button data-act="mute">Sound: <span id="sndState">on</span></button><button data-act="ambience">Ambience hum: <span id="humState">off</span></button><button data-act="darkside">Dark Side look: <span id="dsState2">off</span></button><button data-act="help">Controls</button></div>
 </div></div>
 
 <div id="help" class="overlay" role="dialog" aria-label="Controls"><div class="card wide">
