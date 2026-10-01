@@ -17,5 +17,14 @@ Reported after testing the hosted build.
 
 Also: Orbital and Mnemo gained inline favicons (they logged a 404 for `/favicon.ico` when served over http).
 
+## Batch B1 - Neuron Forge simple mode
+
+| Area | Change | Evidence |
+|---|---|---|
+| **Neuron Forge** | New **Simple mode** (top-bar switch, `E` key, or `index.html#simple`): plain-language labels, expert controls hidden, a Coach that narrates what the network is doing, kid-friendly tooltips / guided tour / experiments, five Missions on the existing scoring engine, and a 12-word glossary. The normal app is unchanged: switching off restores the original text. | Scripted run: no jargon left in visible text, Coach changes state (including correct "memorizing" detection on the Swirl), 5 missions load, glossary has 12 entries, two on/off round trips restore every text label, 0 console errors, phone layout has no horizontal overflow, diagram labels measured as unclipped |
+| **Neuron Forge** | Only change to existing code: `main.js` now exposes `renderLearn` on `NFApp`. | |
+
+**Not verified:** reading level with real children, screen readers, Firefox / Safari, and the Coach wording in every edge case.
+
 ### Not yet done (from the same feedback list)
-Neuron Forge simplified mode, Resonance genre switching / song library / themes, Prism "Dark Side" theme, Atmos live data, Mnemo OneDrive/Claude/Copilot access.
+Resonance genre switching / song library / themes, Prism "Dark Side" theme, Atmos live data, Mnemo OneDrive/Claude/Copilot access.

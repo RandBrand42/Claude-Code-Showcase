@@ -51,6 +51,25 @@ Everything you see is computed live in the page: every heatmap pixel inside ever
 
 ![Phone layout](screenshots/mobile.png)
 
+## Simple mode: "explain it like I'm 12"
+
+Press **Simple mode** in the top bar (or the `E` key) to turn the whole lab into a version an early middle schooler can follow. The normal app is untouched: switch it off and every label returns to its original text. Your choice is remembered, and `...index.html#simple` opens straight into it.
+
+![Simple mode](screenshots/simple-mode.png)
+
+| What changes | How |
+|---|---|
+| **Plain words everywhere** | Epoch becomes "Rounds", learning rate "Step size", noise "Messiness", train / test "Practice / quiz", loss "Mistakes", layers "Stages", features "Clues", and the puzzles get friendly names (Bullseye, Donut, Checkers, Swirl...). Class +1 / -1 become "team Orange" / "team Blue". |
+| **Fewer controls** | The optimiser, loss function, batch size, regularisation, weight initialisation, seed box, activation plot and weight histograms are hidden. One slider remains in the teaching panel: Step size. |
+| **A Coach** | A talking panel that watches the network and explains, in a sentence or two, what is going on: guessing at the start, learning, stuck with no hidden stage ("one straight line"), memorising (practice score far above quiz score), bouncing (step size too big), blown up, or solved. It also suggests what to try next. |
+| **Kid versions of the tooltips, guided tour and experiments** | Analogies instead of maths: neurons are tiny voters, weights are dials, a stage is a row of voters. |
+| **Missions** | The five challenges re-worded as missions, run by the same scoring engine. |
+| **Words to know** | The technical Learn tab becomes a 12-entry glossary. |
+
+**How it is built.** `js/simple.js` and `css/simple.css` sit on top of the normal app and do nothing until the switch is on. Relabelling is a reversible dictionary translator: it rewrites visible text and `title` / `aria-label` attributes, watches the page with a `MutationObserver` so dynamically built text (toasts, hover cards, menus) is translated too, and remembers every original string so switching off restores it. The tooltips, tour and experiment descriptions are swapped in place in `NF.HELP`, `NF.TOUR` and `NF.RECIPES` and put back afterwards. Hiding is pure CSS scoped to `body.simple`. Missions are a subclass of the existing `Challenges` engine; both engines share one storage key, so each merges before saving to avoid overwriting the other's progress. The only change to the original code is that `main.js` now also exposes `renderLearn` on `NFApp`.
+
+**Verified** (headless Edge, scripted): switching on opens the kid tour and leaves no jargon in the visible text (a scan for epoch, seed, loss, activation, weight, bias, hidden, noise, samples, layers and similar words found none); the expert panels are hidden and one training control remains; the Coach changes message as training proceeds and correctly flagged real memorising on the Swirl; all five missions load and apply their setups; the glossary has 12 entries; switching off and on twice restores every text label (only live training numbers differ); zero console errors. **Not verified:** reading level by real children (the wording is aimed at ages 11-12 but has not been tested with any); screen readers; Firefox and Safari; the phone layout beyond a screenshot; whether the Coach wording is right in every edge case (for example after loading a mission mid-run).
+
 ## Run it
 
 Double-click `index.html`. No install, no server, no network; it works from `file://`. Optional: `python -m http.server` and open <http://localhost:8000/>.
@@ -66,6 +85,7 @@ Engine tests (needs Node, no packages): `node tests/verify-engine.cjs`.
 | `R` | Reset weights from the same seed, keep the data |
 | `N` | New seed (new data and weights) |
 | `1` - `7` | Choose dataset |
+| `E` | Simple mode on / off (plain-words version for younger learners) |
 | `?` | Shortcut overlay |
 | `Esc` | Close menu, dialog, edge scrubber or tour |
 | Tour: `Left` / `Right` / `Enter` | Back / next |

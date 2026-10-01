@@ -1,0 +1,62 @@
+/* NEURON FORGE - Simple mode. Every rule here is scoped to body.simple (or to elements that only exist for it),
+   so the normal app is unchanged when the switch is off. */
+
+/* ---------- the switch ---------- */
+.btn--simple { gap: 7px; }
+.btn--simple[aria-pressed="true"] { background: linear-gradient(180deg, rgba(255, 178, 36, .3), rgba(255, 178, 36, .14)); border-color: var(--amber); color: var(--amber-hot); box-shadow: 0 0 16px var(--amber-glow); }
+
+/* ---------- things that only exist in simple mode ---------- */
+#panel-coach, .legend--simple, #tab-missions, #tp-missions { display: none; }
+body.simple #panel-coach { display: block; }
+body.simple .legend--simple { display: grid; }
+body.simple #tab-missions { display: block; }
+body.simple #tp-missions:not([hidden]) { display: block; }
+
+/* ---------- hide the expert controls ---------- */
+body.simple #panel-inspect,        /* activation plot + weight histograms */
+body.simple #panel-loss .panel__sub .seg,   /* log / lin toggle (the app swaps the element, so it has no id) */
+body.simple #stats,                /* parameter counts and update rates */
+body.simple .legend:not(.legend--simple),
+body.simple label.readout,         /* seed box */
+body.simple #arch-label,
+body.simple #param-label,
+body.simple #tab-challenges,
+body.simple #tp-challenges,
+body.simple #btn-share,
+body.simple #btn-keys { display: none !important; }
+/* Teaching panel: keep only the step-size slider (the 4th control); the rest is optimiser / loss / regularisation detail */
+body.simple #train-ctl > :not(:nth-child(4)) { display: none; }
+
+/* ---------- friendlier type ---------- */
+body.simple .panel__title { letter-spacing: .02em; }
+body.simple .ctl__label { font-size: 12.5px; }
+body.simple .dset-name b { color: var(--amber-hot); }
+body.simple .dset-name span { font-size: 13px; line-height: 1.5; }
+body.simple #tp-learn details p, body.simple .card p { font-size: 13.5px; line-height: 1.6; }
+
+/* ---------- diagram labels: the plain-words clue names are longer than x₁ / x₂ ---------- */
+body.simple .nlabel--in { font-size: 8.5px; letter-spacing: -.04em; transform: translate(calc(-100% - 2px), -50%); }
+
+/* ---------- plain-words legend ---------- */
+.legend--simple { gap: 6px; font-size: 12.5px; color: var(--text-dim); }
+.legend--simple > div { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+/* ---------- Coach ---------- */
+.coach { padding: 14px 14px 12px; border-color: rgba(255, 178, 36, .35); background: linear-gradient(180deg, rgba(255, 178, 36, .09), rgba(255, 178, 36, .02) 60%), var(--bg-2); box-shadow: 0 0 28px -10px var(--amber-glow); }
+.coach__row { display: flex; gap: 12px; align-items: flex-start; }
+.coach__face { flex: none; width: 54px; height: 54px; color: var(--amber-hot); filter: drop-shadow(0 0 10px var(--amber-glow)); }
+.coach__face svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.coach__face .mouth { display: none; }
+.coach__face[data-mood="happy"] .mouth--happy, .coach__face[data-mood="flat"] .mouth--flat, .coach__face[data-mood="sad"] .mouth--sad { display: block; }
+.coach__face .eye { transform-origin: center; transform-box: fill-box; animation: coach-blink 5.5s infinite; }
+@keyframes coach-blink { 0%, 94%, 100% { transform: scaleY(1); } 96.5% { transform: scaleY(.1); } }
+.coach__bubble { position: relative; flex: 1; min-width: 0; padding: 10px 12px 11px; border-radius: 4px 14px 14px 14px; background: rgba(255, 255, 255, .05); border: 1px solid var(--line); }
+.coach__name { display: block; margin-bottom: 4px; font: 600 10px/1 var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--amber); }
+.coach__bubble p { margin: 0; font-size: 14px; line-height: 1.55; color: var(--text); }
+.coach__chips { display: flex; flex-wrap: wrap; gap: 6px 8px; margin-top: 11px; }
+.coach__chips span { flex: 1 1 auto; padding: 6px 9px; border-radius: 9px; background: rgba(255, 255, 255, .04); border: 1px solid var(--line); font: 500 11px/1.2 var(--font-text); color: var(--text-dim); white-space: nowrap; }
+.coach__chips b { margin-left: 4px; color: var(--text); font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.coach__tip { margin: 10px 2px 0; font-size: 12.5px; line-height: 1.5; color: var(--amber-hot); }
+.coach__tip:empty { display: none; }
+
+@media (prefers-reduced-motion: reduce) { .coach__face .eye { animation: none; } }

@@ -5,6 +5,11 @@
   "order": 30,
   "feature": true,
   "tagline": "Watch a neural network learn, live",
-  "description": "A from-scratch neural-network laboratory with real backprop, Adam, live decision boundaries, neuron-level heatmaps, challenges and a guided tour.",
-  "tech": ["Backprop", "Adam", "Canvas", "Guided tour"]
+  "description": "A from-scratch neural-network laboratory with real backprop, Adam, live decision boundaries, neuron-level heatmaps, challenges and a guided tour. Includes a Simple mode that explains everything in plain words for younger learners.",
+  "tech": [
+    "Backprop",
+    "Adam",
+    "Canvas",
+    "Simple mode"
+  ]
 }

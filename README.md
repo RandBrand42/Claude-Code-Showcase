@@ -337,7 +337,7 @@ Every app folder follows the same shape: `index.html`, `css/`, `js/`, `screensho
 |---|---|
 | Gallery | `1`-`9` opens the app |
 | Fluxfield | `Space` pause, `K` kaleidoscope, `1`-`7` scenes, `?` help |
-| Neuron Forge | `Space` play / pause, `S` step, `R` reset, `1`-`7` dataset, `?` help |
+| Neuron Forge | `Space` play / pause, `S` step, `R` reset, `1`-`7` dataset, `E` simple mode, `?` help |
 | Resonance | `Space` play / stop, `1`-`4` patterns, `A W S E D F T G Y H U J K` play notes, `?` help |
 | Orbital | `Space` pause, `R` reverse, `1`-`0` scenes, `?` help |
 | Mnemo | `Ctrl+O` switcher, `Ctrl+G` graph, `Ctrl+E` mode, `?` help |

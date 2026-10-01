@@ -12,11 +12,11 @@ window.SHOWCASE_REGISTRY = {
     ],
     [
       "source files",
-      97
+      99
     ],
     [
       "lines of code",
-      24108
+      24593
     ],
     [
       "runtime dependencies",
@@ -69,20 +69,20 @@ window.SHOWCASE_REGISTRY = {
       "name": "Neuron Forge",
       "kind": "Science",
       "tagline": "Watch a neural network learn, live",
-      "description": "A from-scratch neural-network laboratory with real backprop, Adam, live decision boundaries, neuron-level heatmaps, challenges and a guided tour.",
+      "description": "A from-scratch neural-network laboratory with real backprop, Adam, live decision boundaries, neuron-level heatmaps, challenges and a guided tour. Includes a Simple mode that explains everything in plain words for younger learners.",
       "tech": [
         "Backprop",
         "Adam",
         "Canvas",
-        "Guided tour"
+        "Simple mode"
       ],
       "hue": 268,
       "order": 30,
       "feature": true,
       "image": "assets/thumbs/neuron-forge.webp",
       "readme": true,
-      "files": 14,
-      "lines": 2878
+      "files": 16,
+      "lines": 3363
     },
     {
       "id": "resonance",

@@ -299,5 +299,5 @@
   if (!reduced) setPlaying(true);
   if (!store.get('tour')) setTimeout(() => { if (!document.hidden) tour.open(0); }, 1800);
 
-  window.NFApp = { lab, boundary, netview, lossChart, challenges, tour, loadConfig, setPlaying, isPlaying: () => playing };
+  window.NFApp = { lab, boundary, netview, lossChart, challenges, tour, loadConfig, setPlaying, isPlaying: () => playing, renderLearn };
 })();
